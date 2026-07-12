@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidature Stage ONEP</title>
+  <link rel="stylesheet" th:href="@{/css/style.css(v=3)}">
+</head>
+<body>
+  <div class="page-wrapper">
+    <header class="page-header">
+      <a href="/" class="page-header__logo">
+        <svg viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 2C17 2 5 16 5 24C5 30.5 10.5 33 17 33C23.5 33 29 30.5 29 24C29 16 17 2 17 2Z" fill="#0c4a6e"/>
+          <path d="M17 4C17 4 7 17 7 24C7 29 11 32 17 32C23 32 27 29 27 24C27 17 17 4 17 4Z" fill="#f0f9ff" opacity="0.15"/>
+          <path d="M11.5 24C13 22 15.5 21.5 17 23C18.5 24.5 21 25 23.5 24" stroke="#e0f2fe" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+          <path d="M17 2C17 2 5 16 5 24C5 30.5 10.5 33 17 33C23.5 33 29 30.5 29 24C29 16 17 2 17 2Z" stroke="#0c4a6e" stroke-width="1.5"/>
+        </svg>
+        ONEP
+      </a>
+    </header>
+
+    <main class="page-main">
+      <div class="card">
+        <h1>Formulaire de candidature</h1>
+        <p class="subtitle">Stage au sein de l'Office National de l'Électricité et de l'Eau Potable — Branche Eau</p>
+
+        <form method="post" th:action="@{/apply}" th:object="${form}" enctype="multipart/form-data" novalidate id="applyForm">
+          <div th:if="${#fields.hasErrors('global')}" class="alert alert--error">Veuillez corriger les erreurs ci-dessous.</div>
+
+          <div class="form-group">
+            <label for="firstName" class="form-label">Prénom <span class="required">*</span></label>
+            <input type="text" id="firstName" name="firstName" class="form-input" th:field="*{firstName}" th:errorclass="error" required autocomplete="given-name">
+            <div id="firstName-error" class="form-error" th:classappend="${#fields.hasErrors('firstName')} ? 'visible'" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Le prénom est requis.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="lastName" class="form-label">Nom <span class="required">*</span></label>
+            <input type="text" id="lastName" name="lastName" class="form-input" th:field="*{lastName}" th:errorclass="error" required autocomplete="family-name">
+            <div id="lastName-error" class="form-error" th:classappend="${#fields.hasErrors('lastName')} ? 'visible'" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Le nom est requis.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Email <span class="required">*</span></label>
+            <input type="email" id="email" name="email" class="form-input" th:field="*{email}" th:errorclass="error" required autocomplete="email">
+            <div id="email-error" class="form-error" th:classappend="${#fields.hasErrors('email')} ? 'visible'" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">L'email est requis.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone" class="form-label">Téléphone <span class="required">*</span></label>
+            <input type="tel" id="phone" name="phone" class="form-input" th:field="*{phone}" th:errorclass="error" required autocomplete="tel">
+            <div id="phone-error" class="form-error" th:classappend="${#fields.hasErrors('phone')} ? 'visible'" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">Le téléphone est requis.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="university-input" class="form-label">Université / École <span class="required">*</span></label>
+            <div class="combobox-wrapper" id="university-combobox">
+              <input type="text" id="university-input" class="combobox-input" placeholder="Rechercher une université..." autocomplete="off" aria-expanded="false" aria-autocomplete="list" aria-controls="university-list" role="combobox">
+              <input type="hidden" id="university" name="university" th:field="*{university}" required>
+              <svg class="combobox-arrow" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="combobox-dropdown" id="university-list" role="listbox"></div>
+            </div>
+            <div id="university-error" class="form-error" th:classappend="${#fields.hasErrors('university')} ? 'visible'" th:if="${#fields.hasErrors('university')}" th:errors="*{university}">L'université est requise.</div>
+            <div class="form-error" th:classappend="${#fields.hasErrors('universityValid')} ? 'visible'" th:if="${#fields.hasErrors('universityValid')}" th:errors="*{universityValid}"></div>
+            <div class="combobox-other-input" id="university-other-wrapper">
+              <input type="text" id="universityOther" name="universityOther" class="form-input" th:field="*{universityOther}" placeholder="Précisez le nom de votre établissement">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="major" class="form-label">Filière / Spécialité <span class="required">*</span></label>
+            <input type="text" id="major" name="major" class="form-input" th:field="*{major}" th:errorclass="error" required placeholder="Ex: Génie Informatique, Génie Civil, ...">
+            <div id="major-error" class="form-error" th:classappend="${#fields.hasErrors('major')} ? 'visible'" th:if="${#fields.hasErrors('major')}" th:errors="*{major}">La filière est requise.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="coverMessage" class="form-label">Lettre de motivation</label>
+            <textarea id="coverMessage" name="coverMessage" class="form-textarea" th:field="*{coverMessage}" rows="5" placeholder="Dites-nous pourquoi ce stage vous intéresse (optionnel)"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="cvFile" class="form-label">CV <span class="required">*</span></label>
+            <div class="file-upload-wrapper">
+              <div class="file-upload-area" id="file-upload-area" th:classappend="${#fields.hasErrors('cvFile')} ? 'error'">
+                <svg class="file-upload-icon" viewBox="0 0 40 40" fill="none"><path d="M20 28V12m0 0l-6 6m6-6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 28v2a2 2 0 002 2h20a2 2 0 002-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <div class="file-upload-text" id="file-upload-text">
+                  <strong>Cliquez pour parcourir</strong> ou glissez-déposez votre CV ici
+                </div>
+                <div class="file-upload-name" id="file-upload-name" style="display:none"></div>
+                <input type="file" id="cvFile" name="cvFile" class="file-upload-input" th:field="*{cvFile}" accept=".pdf,.doc,.docx" required>
+              </div>
+            </div>
+            <div class="form-hint">Formats acceptés : PDF, DOC, DOCX — Taille max : 10 Mo</div>
+            <div id="cvFile-error" class="form-error" th:classappend="${#fields.hasErrors('cvFile')} ? 'visible'" th:if="${#fields.hasErrors('cvFile')}" th:errors="*{cvFile}">Le CV est requis.</div>
+          </div>
+
+          <div class="honeypot">
+            <label for="website">Website</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--full" id="submit-btn">Envoyer ma candidature</button>
+        </form>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      &copy; 2026 ONEP — Office National de l'Électricité et de l'Eau Potable
+    </footer>
+  </div>
+
+  <script>
+    // ============ University Combobox ============
+    ;(function() {
+      var universities = [
+        "Université Mohammed V — Rabat",
+        "Université Hassan II — Casablanca",
+        "Université Sidi Mohamed Ben Abdellah — Fès",
+        "Université Ibn Tofail — Kénitra",
+        "Université Abdelmalek Essaâdi — Tétouan",
+        "Université Chouaïb Doukkali — El Jadida",
+        "Université Moulay Ismail — Meknès",
+        "Université Cadi Ayyad — Marrakech",
+        "Université Ibn Zohr — Agadir",
+        "Université Mohammed Ier — Oujda",
+        "Université Hassan Ier — Settat",
+        "Université Sultan Moulay Slimane — Béni Mellal",
+        "Université Mohamed VI Polytechnique — Benguerir",
+        "Université Internationale de Rabat",
+        "Université Al Akhawayn — Ifrane",
+        "Université Mundiapolis — Casablanca",
+        "Université Privée de Fès",
+        "Université Internationale de Casablanca",
+        "Université Privée de Marrakech",
+        "Université Privée de Tanger",
+        "Université Euro-Méditerranéenne de Fès",
+        "Université Hassan II — Mohammedia",
+        "ENSIAS — Rabat",
+        "EMI — Rabat",
+        "INPT — Rabat",
+        "IAV Hassan II — Rabat",
+        "INSEA — Rabat",
+        "EHTP — Casablanca",
+        "ENSEM — Casablanca",
+        "ENIM — Rabat",
+        "ENSMR (ex-ENIM) — Rabat",
+        "ENSA d'Agadir",
+        "ENSA d'Al Hoceima",
+        "ENSA de Béni Mellal",
+        "ENSA d'El Jadida",
+        "ENSA de Fès",
+        "ENSA d'El Hoceima",
+        "ENSA de Kénitra",
+        "ENSA de Khouribga",
+        "ENSA de Marrakech",
+        "ENSA d'Oujda",
+        "ENSA de Safi",
+        "ENSA de Tanger",
+        "ENSA de Tétouan",
+        "EST d'Agadir",
+        "EST de Béni Mellal",
+        "EST de Casablanca",
+        "EST d'El Jadida",
+        "EST d'Essaouira",
+        "EST de Fès",
+        "EST de Guelmim",
+        "EST de Khénifra",
+        "EST de Laâyoune",
+        "EST de Meknès",
+        "EST d'Oujda",
+        "EST de Salé",
+        "EST de Safi",
+        "EST de Tanger",
+        "EST de Tétouan",
+        "FST de Béni Mellal",
+        "FST de Fès",
+        "FST d'Errachidia",
+        "FST de Marrakech",
+        "FST de Mohammedia",
+        "FST de Settat",
+        "FST de Tanger",
+        "FST de Tétouan",
+        "ENCG d'Agadir",
+        "ENCG de Casablanca",
+        "ENCG d'El Jadida",
+        "ENCG de Fès",
+        "ENCG de Kénitra",
+        "ENCG de Khouribga",
+        "ENCG de Marrakech",
+        "ENCG d'Oujda",
+        "ENCG de Settat",
+        "ENCG de Tanger",
+        "ENCG de Tétouan",
+        "EMSI — Casablanca / Rabat / Marrakech",
+        "ESITH — Casablanca",
+        "1337 (UM6P) — Khouribga / Benguerir",
+        "ISGA — Casablanca / Marrakech",
+        "HEC — Casablanca (Groupe OCP)",
+        "ESCA École de Management — Casablanca",
+        "Sup de Co — Marrakech"
+      ].sort(function(a, b) {
+        var aNorm = a.replace(/^[^a-zA-Z]+/, '').toLowerCase();
+        var bNorm = b.replace(/^[^a-zA-Z]+/, '').toLowerCase();
+        if (aNorm < bNorm) return -1;
+        if (aNorm > bNorm) return 1;
+        return 0;
+      });
+
+      var wrapper = document.getElementById('university-combobox');
+      var input = document.getElementById('university-input');
+      var hidden = document.getElementById('university');
+      var list = document.getElementById('university-list');
+      var otherWrapper = document.getElementById('university-other-wrapper');
+      var otherInput = document.getElementById('universityOther');
+
+      var selectedValue = '';
+      var highlightedIndex = -1;
+      var open = false;
+
+      function render(filterText) {
+        var text = (filterText || '').toLowerCase().trim();
+        var matched = [];
+        var hasOther = text === '' || 'autre'.indexOf(text) !== -1 || 'other'.indexOf(text) !== -1;
+
+        for (var i = 0; i < universities.length; i++) {
+          if (!text || universities[i].toLowerCase().indexOf(text) !== -1) {
+            matched.push(universities[i]);
+          }
+        }
+
+        var html = '';
+        if (matched.length === 0) {
+          html = '<div class="combobox-no-results">Aucun résultat</div>';
+        } else {
+          for (var j = 0; j < matched.length; j++) {
+            var selected = matched[j] === selectedValue ? ' selected' : '';
+            html += '<div class="combobox-option' + selected + '" role="option" data-value="' + matched[j].replace(/"/g, '&quot;') + '">' + matched[j] + '</div>';
+          }
+        }
+        html += '<div class="combobox-option other-option" role="option" data-value="__other__">Autre / Other</div>';
+        list.innerHTML = html;
+        highlightedIndex = -1;
+      }
+
+      function openDropdown() {
+        open = true;
+        list.classList.add('open');
+        input.setAttribute('aria-expanded', 'true');
+        render(input.value);
+      }
+
+      function closeDropdown(restoreFocus) {
+        open = false;
+        list.classList.remove('open');
+        input.setAttribute('aria-expanded', 'false');
+        if (restoreFocus !== false) input.focus();
+      }
+
+      function selectValue(value) {
+        selectedValue = value;
+        if (value === '__other__') {
+          input.value = '';
+          hidden.value = '__other__';
+          hidden.required = false;
+          otherWrapper.classList.add('visible');
+          otherInput.setAttribute('required', '');
+          otherInput.focus();
+          render('');
+        } else {
+          input.value = value;
+          hidden.value = value;
+          hidden.required = true;
+          otherWrapper.classList.remove('visible');
+          otherInput.removeAttribute('required');
+          otherInput.value = '';
+        }
+        closeDropdown();
+        var errorEl = document.getElementById('university-error');
+        if (errorEl) { errorEl.textContent = ''; errorEl.classList.remove('visible'); }
+      }
+
+      function highlightNext() {
+        var options = list.querySelectorAll('.combobox-option:not(.combobox-no-results)');
+        if (options.length === 0) return;
+        highlightedIndex = Math.min(highlightedIndex + 1, options.length - 1);
+        updateHighlight(options);
+      }
+
+      function highlightPrev() {
+        var options = list.querySelectorAll('.combobox-option:not(.combobox-no-results)');
+        if (options.length === 0) return;
+        highlightedIndex = Math.max(highlightedIndex - 1, -1);
+        updateHighlight(options);
+      }
+
+      function updateHighlight(options) {
+        for (var i = 0; i < options.length; i++) {
+          options[i].classList.toggle('highlighted', i === highlightedIndex);
+        }
+        if (highlightedIndex >= 0 && options[highlightedIndex]) {
+          options[highlightedIndex].scrollIntoView({ block: 'nearest' });
+        }
+      }
+
+      function commitHighlight() {
+        if (highlightedIndex < 0) return;
+        var options = list.querySelectorAll('.combobox-option:not(.combobox-no-results)');
+        if (options[highlightedIndex]) {
+          selectValue(options[highlightedIndex].getAttribute('data-value'));
+        }
+      }
+
+      // --- Input events ---
+      input.addEventListener('input', function() {
+        if (!open) openDropdown();
+        else render(input.value);
+      });
+
+      input.addEventListener('focus', function() {
+        if (!open) openDropdown();
+      });
+
+      input.addEventListener('blur', function() {
+        setTimeout(function() {
+          if (open) closeDropdown(false);
+        }, 180);
+      });
+
+      input.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (open) closeDropdown();
+        else openDropdown();
+      });
+
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (!open) openDropdown();
+          else highlightNext();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (open) highlightPrev();
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (open && highlightedIndex >= 0) commitHighlight();
+          else if (open) closeDropdown();
+        } else if (e.key === 'Escape') {
+          closeDropdown();
+        } else if (e.key === 'Tab') {
+          if (open) commitHighlight();
+          closeDropdown(false);
+        }
+      });
+
+      // --- List click delegation ---
+      list.addEventListener('mousedown', function(e) {
+        var option = e.target.closest('.combobox-option');
+        if (option) {
+          e.preventDefault();
+          selectValue(option.getAttribute('data-value'));
+        }
+      });
+
+      // --- Init from server value ---
+      if (hidden.value) {
+        var match = null;
+        for (var i = 0; i < universities.length; i++) {
+          if (universities[i] === hidden.value) {
+            match = universities[i];
+            break;
+          }
+        }
+        if (match) {
+          selectedValue = match;
+          input.value = match;
+        } else if (hidden.value === '__other__') {
+          selectedValue = '__other__';
+          input.value = '';
+          otherWrapper.classList.add('visible');
+          otherInput.focus();
+        }
+      }
+      render('');
+
+      // ============ File Upload ============
+      var fileInput = document.getElementById('cvFile');
+      var fileArea = document.getElementById('file-upload-area');
+      var fileUploadWrapper = fileArea.parentElement;
+      var fileText = document.getElementById('file-upload-text');
+      var fileName = document.getElementById('file-upload-name');
+
+      fileInput.addEventListener('change', function() {
+        handleFile(this.files[0]);
+      });
+
+      fileArea.addEventListener('click', function() {
+        fileInput.click();
+      });
+
+      fileUploadWrapper.addEventListener('dragenter', function(e) {
+        e.preventDefault();
+        fileArea.classList.add('dragover');
+      });
+
+      fileUploadWrapper.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        fileArea.classList.add('dragover');
+      });
+
+      fileUploadWrapper.addEventListener('dragleave', function(e) {
+        if (!fileUploadWrapper.contains(e.relatedTarget)) {
+          fileArea.classList.remove('dragover');
+        }
+      });
+
+      fileUploadWrapper.addEventListener('drop', function(e) {
+        e.preventDefault();
+        fileArea.classList.remove('dragover');
+        if (e.dataTransfer.files.length) {
+          var file = e.dataTransfer.files[0];
+          var dt = new DataTransfer();
+          dt.items.add(file);
+          fileInput.files = dt.files;
+          handleFile(file);
+        }
+      });
+
+      function showFileError(msg) {
+        var errorEl = document.getElementById('cvFile-error');
+        fileInput.value = '';
+        fileArea.classList.remove('has-file', 'dragover');
+        fileArea.classList.add('error');
+        fileText.style.display = '';
+        fileName.style.display = 'none';
+        if (errorEl) { errorEl.textContent = msg; errorEl.classList.add('visible'); }
+      }
+
+      function clearFileError() {
+        var errorEl = document.getElementById('cvFile-error');
+        fileArea.classList.remove('error');
+        fileText.style.display = '';
+        fileName.style.display = 'none';
+        if (errorEl) { errorEl.textContent = ''; errorEl.classList.remove('visible'); }
+      }
+
+      function handleFile(file) {
+        clearFileError();
+        if (!file) {
+          fileArea.classList.remove('has-file');
+          return;
+        }
+        var ext = file.name.split('.').pop().toLowerCase();
+        if (['pdf','doc','docx'].indexOf(ext) === -1) {
+          showFileError('Format non accepté. Utilisez PDF, DOC ou DOCX.');
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          showFileError('Le fichier dépasse la limite de 10 Mo.');
+          return;
+        }
+        fileArea.classList.remove('error', 'dragover');
+        fileArea.classList.add('has-file');
+        fileText.style.display = 'none';
+        fileName.style.display = 'block';
+        fileName.textContent = file.name;
+        fileName.style.color = '#059669';
+      }
+
+      // ============ Form Validation ============
+      var form = document.getElementById('applyForm');
+      var submitBtn = document.getElementById('submit-btn');
+
+      var fields = [
+        { id: 'firstName', validate: function(el) { return el.value.trim() !== ''; }, msg: 'Le prénom est requis.' },
+        { id: 'lastName', validate: function(el) { return el.value.trim() !== ''; }, msg: 'Le nom est requis.' },
+        { id: 'email', validate: function(el) {
+            if (!el.value.trim()) return false;
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());
+          }, msg: 'Veuillez entrer une adresse email valide.' },
+        { id: 'phone', validate: function(el) { return el.value.trim() !== ''; }, msg: 'Le téléphone est requis.' },
+        { id: 'university', validate: function(el) { return el.value.trim() !== ''; }, msg: 'Veuillez sélectionner votre université.' },
+        { id: 'major', validate: function(el) { return el.value.trim() !== ''; }, msg: 'La filière est requise.' },
+        { id: 'cvFile', validate: function(el) { return el.files.length > 0; }, msg: 'Le CV est requis.' }
+      ];
+
+      function validateField(field) {
+        var el = document.getElementById(field.id);
+        var errorEl = document.getElementById(field.id + '-error');
+        if (!el || !errorEl) return true;
+        if (!field.validate(el)) {
+          errorEl.textContent = field.msg;
+          errorEl.classList.add('visible');
+          el.classList.add('error');
+          return false;
+        }
+        errorEl.textContent = '';
+        errorEl.classList.remove('visible');
+        el.classList.remove('error');
+        return true;
+      }
+
+      fields.forEach(function(f) {
+        var el = document.getElementById(f.id);
+        if (el) {
+          el.addEventListener('blur', function() { validateField(f); });
+          el.addEventListener('input', function() {
+            if (this.classList.contains('error')) validateField(f);
+          });
+        }
+      });
+
+      form.addEventListener('submit', function(e) {
+        var valid = true;
+        fields.forEach(function(f) {
+          if (!validateField(f)) valid = false;
+        });
+        if (hidden.value === '__other__') {
+          if (!otherInput.value.trim()) {
+            var otherError = document.getElementById('university-error');
+            otherError.textContent = 'Veuillez préciser votre établissement.';
+            otherError.classList.add('visible');
+            valid = false;
+          }
+        }
+        if (!valid) {
+          e.preventDefault();
+          var firstError = form.querySelector('.form-error.visible');
+          if (firstError) firstError.closest('.form-group')?.querySelector('input, textarea')?.focus();
+          return;
+        }
+        submitBtn.disabled = true;
+        submitBtn.classList.add('btn--loading');
+      });
+    })();
+  </script>
+</body>
+</html>

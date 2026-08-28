@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes candidatures â€” SRM</title>
+  <link rel="stylesheet" th:href="@{/css/style.css(v=5)}">
+</head>
+<body>
+  <div class="page-wrapper">
+    <header class="page-header">
+      <a th:href="@{/}" class="page-header__logo">
+        <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="SRM" class="page-header__logo-img" />
+      </a>
+      <span class="user-greeting" th:text="${'Bonjour, ' + user.name}">Bonjour, John Doe</span>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <nav class="page-header__nav" id="mainNav">
+        <span th:if="${cycleBlocked}" class="tooltip-wrapper" style="display:inline-block;">
+          <a class="btn btn--outline btn--sm" style="pointer-events:none;opacity:0.5;cursor:not-allowed;">Nouvelle candidature</a>
+          <span class="tooltip-text">Vous pourrez postuler &agrave; nouveau l'ann&eacute;e prochaine</span>
+        </span>
+        <a th:unless="${cycleBlocked}" th:href="@{/applicant/apply}" class="btn btn--outline btn--sm">Nouvelle candidature</a>
+        <form method="post" th:action="@{/logout}">
+          <button type="submit" class="btn btn--outline btn--sm">D&eacute;connexion</button>
+        </form>
+      </nav>
+    </header>
+
+    <main class="page-main page-main--wide">
+      <div class="dashboard-header">
+        <h1>Mes candidatures</h1>
+      </div>
+
+      <div th:if="${#lists.isEmpty(applications)}" class="card card--centered" style="padding:3rem 2rem;">
+        <p style="color:var(--muted);margin-bottom:1rem;">Vous n'avez encore soumis aucune candidature.</p>
+        <span th:if="${cycleBlocked}" class="tooltip-wrapper" style="display:inline-block;">
+          <a class="btn btn--primary" style="pointer-events:none;opacity:0.5;cursor:not-allowed;">Postuler maintenant</a>
+          <span class="tooltip-text">Vous pourrez postuler &agrave; nouveau l'ann&eacute;e prochaine</span>
+        </span>
+        <a th:unless="${cycleBlocked}" th:href="@{/applicant/apply}" class="btn btn--primary">Postuler maintenant</a>
+      </div>
+
+      <div class="card" th:if="${!#lists.isEmpty(applications)}" style="padding:0;overflow:hidden;">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Nom complet</th>
+                <th>Email</th>
+                <th>Date de soumission</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="app : ${applications}" th:attr="data-edit=${app.status.applicantEditable} ? @{/applicant/apply(id=${app.id})} : '', data-view=@{/applicant/application/{id}(id=${app.id})}" onclick="location.href=this.getAttribute('data-edit') || this.getAttribute('data-view')" style="cursor:pointer">
+                <td th:text="${app.firstName + ' ' + app.lastName}">John Doe</td>
+                <td th:text="${app.email}">john@example.com</td>
+                <td th:text="${app.submittedDate != null ? #temporals.format(app.submittedDate, 'dd/MM/yyyy HH:mm') : 'â€”'}">12/03/2024</td>
+                <td>
+                  <span class="badge" th:classappend="${'badge--' + app.status.cssClass}" th:text="${app.status.label}">Brouillon</span>
+                </td>
+                <td onclick="event.stopPropagation()">
+                  <div class="action-buttons">
+                    <a th:if="${app.status.applicantEditable}" th:href="@{/applicant/apply(id=${app.id})}" class="btn btn--outline btn--sm">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      Modifier
+                    </a>
+                    <a th:unless="${app.status.applicantEditable}" th:href="@{/applicant/application/{id}(id=${app.id})}" class="btn btn--outline btn--sm">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      Voir
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', function() {
+      document.getElementById('mainNav').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

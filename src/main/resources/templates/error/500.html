@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Erreur serveur — SRM</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page-wrapper">
+    <header class="page-header">
+        <a th:href="@{/}" class="page-header__logo">
+            <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="SRM" height="50">
+        </a>
+    </header>
+    <main class="container" style="text-align:center;padding:4rem 1rem;">
+        <h1>500 — Erreur interne</h1>
+        <p>Une erreur inattendue s'est produite. Veuillez réessayer plus tard.</p>
+        <a th:href="@{/home/login}" class="btn btn-primary">Se connecter</a>
+        <a th:href="@{/}" class="btn btn-secondary">Accueil</a>
+    </main>
+</div>
+</body>
+</html>

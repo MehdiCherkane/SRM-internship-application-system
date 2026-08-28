@@ -1,0 +1,392 @@
+﻿<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidature â€” SRM</title>
+  <link rel="stylesheet" th:href="@{/css/style.css(v=5)}">
+</head>
+<body>
+  <div class="page-wrapper">
+    <header class="page-header">
+      <a th:href="@{/}" class="page-header__logo">
+        <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="SRM" class="page-header__logo-img" />
+      </a>
+      <span class="user-greeting" th:text="${'Bonjour, ' + user.name}">Bonjour, John Doe</span>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <nav class="page-header__nav" id="mainNav">
+        <a th:href="@{/applicant/dashboard}" class="btn btn--outline btn--sm">Mes candidatures</a>
+        <form method="post" th:action="@{/logout}">
+          <button type="submit" class="btn btn--outline btn--sm">D&eacute;connexion</button>
+        </form>
+      </nav>
+    </header>
+
+    <main class="page-main">
+      <div class="card">
+        <h1 th:if="${!#strings.isEmpty(form.id)}">Modifier ma candidature</h1>
+        <h1 th:if="${#strings.isEmpty(form.id)}">Formulaire de candidature</h1>
+        <p class="subtitle">Stage au sein de la SRM KhÃ©nifra â€” Branche Eau</p>
+
+        <form method="post" th:action="@{/applicant/apply}" th:object="${form}" enctype="multipart/form-data" novalidate id="applyForm">
+          <input type="hidden" name="id" th:value="*{id}">
+          <input type="hidden" th:field="*{existingCv}">
+          <div th:if="${#fields.hasErrors('global')}" class="alert alert--error">Veuillez corriger les erreurs ci-dessous.</div>
+
+          <div class="form-grid">
+
+          <div class="form-group">
+            <label for="firstName" class="form-label">Pr&eacute;nom <span class="required">*</span></label>
+            <input type="text" id="firstName" name="firstName" class="form-input" th:field="*{firstName}" th:errorclass="error" th:readonly="${editingApp != null && editingApp.status.name() != 'DRAFT'}" autocomplete="given-name">
+            <div class="form-error" th:classappend="${#fields.hasErrors('firstName')} ? 'visible'" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Le pr&eacute;nom est requis.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="lastName" class="form-label">Nom <span class="required">*</span></label>
+            <input type="text" id="lastName" name="lastName" class="form-input" th:field="*{lastName}" th:errorclass="error" th:readonly="${editingApp != null && editingApp.status.name() != 'DRAFT'}" autocomplete="family-name">
+            <div class="form-error" th:classappend="${#fields.hasErrors('lastName')} ? 'visible'" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Le nom est requis.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Email <span class="required">*</span></label>
+            <input type="email" id="email" name="email" class="form-input" th:field="*{email}" th:errorclass="error" readonly="readonly" autocomplete="email">
+            <div class="form-error" th:classappend="${#fields.hasErrors('email')} ? 'visible'" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">L'email est requis.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="cni" class="form-label">CIN <span class="required">*</span></label>
+            <input type="text" id="cni" name="cni" class="form-input" th:field="*{cni}" th:errorclass="error" th:readonly="${editingApp != null}" autocomplete="off" maxlength="30" placeholder="Ex. AB123456">
+            <div class="form-hint">Le CIN est requis au moment de soumettre la candidature.</div>
+            <div class="form-error" th:classappend="${#fields.hasErrors('cni')} ? 'visible'" th:if="${#fields.hasErrors('cni')}" th:errors="*{cni}">Le CIN est requis.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone" class="form-label">T&eacute;l&eacute;phone <span class="required">*</span></label>
+            <input type="tel" id="phone" name="phone" class="form-input" th:field="*{phone}" th:errorclass="error" required autocomplete="tel">
+            <div class="form-error" th:classappend="${#fields.hasErrors('phone')} ? 'visible'" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">Le t&eacute;l&eacute;phone est requis.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="university-input" class="form-label">Universit&eacute; / &Eacute;cole <span class="required">*</span></label>
+            <div class="combobox-wrapper" id="university-combobox">
+              <input type="text" id="university-input" class="combobox-input" placeholder="Rechercher une universit&eacute;..." autocomplete="off" aria-expanded="false" aria-autocomplete="list" aria-controls="university-list" role="combobox">
+              <input type="hidden" id="university" name="university" th:value="*{university}" required>
+              <svg class="combobox-arrow" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="combobox-dropdown" id="university-list" role="listbox"></div>
+            </div>
+            <div class="form-error" th:classappend="${#fields.hasErrors('university')} ? 'visible'" th:if="${#fields.hasErrors('university')}" th:errors="*{university}">L'universit&eacute; est requise.</div>
+            <div class="form-error" th:classappend="${#fields.hasErrors('universityValid')} ? 'visible'" th:if="${#fields.hasErrors('universityValid')}" th:errors="*{universityValid}"></div>
+            <div class="combobox-other-input" id="university-other-wrapper">
+              <input type="text" id="universityOther" name="universityOther" class="form-input" th:field="*{universityOther}" placeholder="Pr&eacute;cisez le nom de votre &eacute;tablissement">
+            </div>
+          </div>
+
+          <div class="form-group form-group--full">
+            <label for="major" class="form-label">Fili&egrave;re / Sp&eacute;cialit&eacute; <span class="required">*</span></label>
+            <input type="text" id="major" name="major" class="form-input" th:field="*{major}" th:errorclass="error" required placeholder="Ex: G&eacute;nie Informatique, G&eacute;nie Civil, ...">
+            <div class="form-error" th:classappend="${#fields.hasErrors('major')} ? 'visible'" th:if="${#fields.hasErrors('major')}" th:errors="*{major}">La fili&egrave;re est requise.</div>
+          </div>
+
+          <div class="form-group form-group--full">
+            <label for="coverMessage" class="form-label">Lettre de motivation</label>
+            <textarea id="coverMessage" name="coverMessage" class="form-textarea" th:field="*{coverMessage}" rows="5" placeholder="Dites-nous pourquoi ce stage vous int&eacute;resse (optionnel)"></textarea>
+            <div class="form-error" th:classappend="${#fields.hasErrors('coverMessage')} ? 'visible'" th:if="${#fields.hasErrors('coverMessage')}" th:errors="*{coverMessage}">Max 5000 caract&egrave;res.</div>
+          </div>
+
+          <div class="form-group form-group--full">
+            <label for="cvFile" class="form-label">CV <span class="required" th:if="${!#strings.isEmpty(form.id) && !form.existingCv}">*</span><span class="required" th:unless="${!#strings.isEmpty(form.id) && !form.existingCv}" th:if="${#strings.isEmpty(form.id)}">*</span></label>
+            <div th:if="${editingApp != null && editingApp.cvFilePath != null}" class="existing-cv-info" style="margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem;font-size:0.88rem;color:var(--muted);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              CV actuel : <a th:href="@{/applicant/cv/{id}(id=${editingApp.id})}" target="_blank" rel="noopener" style="color:var(--primary);">Voir le CV</a>
+              <span style="font-size:0.82rem;">| T&eacute;l&eacute;chargez un nouveau fichier pour le remplacer</span>
+            </div>
+            <div class="file-upload-wrapper">
+              <div class="file-upload-area" id="file-upload-area" th:classappend="${#fields.hasErrors('cvFile')} ? 'error'">
+                <svg class="file-upload-icon" viewBox="0 0 40 40" fill="none"><path d="M20 28V12m0 0l-6 6m6-6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 28v2a2 2 0 002 2h20a2 2 0 002-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <div class="file-upload-text" id="file-upload-text">
+                  <strong>Cliquez pour parcourir</strong> ou glissez-d&eacute;posez votre CV ici
+                </div>
+                <div class="file-upload-name" id="file-upload-name" style="display:none"></div>
+                <input type="file" id="cvFile" name="cvFile" class="file-upload-input" accept=".pdf">
+              </div>
+            </div>
+            <div class="form-hint">Format accept&eacute; : PDF &mdash; Taille max : 10 Mo</div>
+            <div class="form-error" th:classappend="${#fields.hasErrors('cvFile')} ? 'visible'" th:if="${#fields.hasErrors('cvFile')}" th:errors="*{cvFile}">Le CV est requis.</div>
+          </div>
+
+          <div class="honeypot">
+            <label for="website">Website</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="action-buttons form-group--full" style="display:flex;gap:0.75rem;">
+            <button type="submit" name="action" value="draft" class="btn btn--outline" th:if="${editingApp == null || editingApp.status.name() == 'DRAFT'}">Enregistrer le brouillon</button>
+            <button type="submit" name="action" value="submit" class="btn btn--primary" id="submit-btn" th:if="${editingApp == null || editingApp.status.name() == 'DRAFT'}">Soumettre la candidature</button>
+            <button type="submit" name="action" value="submit" class="btn btn--primary btn--full" id="submit-btn" th:if="${editingApp != null && editingApp.status.name() == 'SUBMITTED'}">Mettre &agrave; jour la candidature</button>
+          </div>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM
+    </footer>
+  </div>
+
+  <script th:inline="javascript">
+    ;(function() {
+      // ============ University Combobox ============
+      var universities = [
+        "Universit\u00E9 Mohammed V \u2014 Rabat",
+        "Universit\u00E9 Hassan II \u2014 Casablanca",
+        "Universit\u00E9 Sidi Mohamed Ben Abdellah \u2014 F\u00E8s",
+        "Universit\u00E9 Ibn Tofail \u2014 K\u00E9nitra",
+        "Universit\u00E9 Abdelmalek Essa\u00E2di \u2014 T\u00E9touan",
+        "Universit\u00E9 Choua\u00EFb Doukkali \u2014 El Jadida",
+        "Universit\u00E9 Moulay Ismail \u2014 Mekn\u00E8s",
+        "Universit\u00E9 Cadi Ayyad \u2014 Marrakech",
+        "Universit\u00E9 Ibn Zohr \u2014 Agadir",
+        "Universit\u00E9 Mohammed Ier \u2014 Oujda",
+        "Universit\u00E9 Hassan Ier \u2014 Settat",
+        "Universit\u00E9 Sultan Moulay Slimane \u2014 B\u00E9ni Mellal",
+        "Universit\u00E9 Mohamed VI Polytechnique \u2014 Benguerir",
+        "Universit\u00E9 Internationale de Rabat",
+        "Universit\u00E9 Al Akhawayn \u2014 Ifrane",
+        "Universit\u00E9 Mundiapolis \u2014 Casablanca",
+        "Universit\u00E9 Priv\u00E9e de F\u00E8s",
+        "Universit\u00E9 Internationale de Casablanca",
+        "Universit\u00E9 Priv\u00E9e de Marrakech",
+        "Universit\u00E9 Priv\u00E9e de Tanger",
+        "Universit\u00E9 Euro-M\u00E9diterran\u00E9enne de F\u00E8s",
+        "Universit\u00E9 Hassan II \u2014 Mohammedia",
+        "ENSIAS \u2014 Rabat", "EMI \u2014 Rabat", "INPT \u2014 Rabat",
+        "IAV Hassan II \u2014 Rabat", "INSEA \u2014 Rabat", "EHTP \u2014 Casablanca",
+        "ENSEM \u2014 Casablanca", "ENIM \u2014 Rabat", "ENSMR (ex-ENIM) \u2014 Rabat",
+        "ENSA d'Agadir", "ENSA d'Al Hoceima", "ENSA de B\u00E9ni Mellal",
+        "ENSA d'El Jadida", "ENSA de F\u00E8s", "ENSA de K\u00E9nitra",
+        "ENSA de Khouribga", "ENSA de Marrakech", "ENSA d'Oujda",
+        "ENSA de Safi", "ENSA de Tanger", "ENSA de T\u00E9touan",
+        "EST d'Agadir", "EST de B\u00E9ni Mellal", "EST de Casablanca",
+        "EST d'El Jadida", "EST d'Essaouira", "EST de F\u00E8s",
+        "EST de Guelmim", "EST de Kh\u00E9nifra",
+        "EST de La\u00E2youne", "EST de Mekn\u00E8s",
+        "EST d'Oujda", "EST de Sal\u00E9", "EST de Safi",
+        "EST de Tanger", "EST de T\u00E9touan",
+        "FST de B\u00E9ni Mellal", "FST de F\u00E8s", "FST d'Errachidia",
+        "FST de Marrakech", "FST de Mohammedia", "FST de Settat",
+        "FST de Tanger", "FST de T\u00E9touan",
+        "ENCG d'Agadir", "ENCG de Casablanca", "ENCG d'El Jadida",
+        "ENCG de F\u00E8s", "ENCG de K\u00E9nitra", "ENCG de Khouribga",
+        "ENCG de Marrakech", "ENCG d'Oujda", "ENCG de Settat",
+        "ENCG de Tanger", "ENCG de T\u00E9touan",
+        "EMSI \u2014 Casablanca / Rabat / Marrakech", "ESITH \u2014 Casablanca",
+        "1337 (UM6P) \u2014 Khouribga / Benguerir", "ISGA \u2014 Casablanca / Marrakech",
+        "HEC \u2014 Casablanca (Groupe OCP)",
+        "ESCA \u00C9cole de Management \u2014 Casablanca",
+        "Sup de Co \u2014 Marrakech"
+      ].sort(function(a, b) {
+        var aN = a.replace(/^[^a-zA-Z]+/, '').toLowerCase();
+        var bN = b.replace(/^[^a-zA-Z]+/, '').toLowerCase();
+        return aN < bN ? -1 : aN > bN ? 1 : 0;
+      });
+
+      var wrapper = document.getElementById('university-combobox');
+      var input = document.getElementById('university-input');
+      var hidden = document.getElementById('university');
+      var list = document.getElementById('university-list');
+      var otherWrapper = document.getElementById('university-other-wrapper');
+      var otherInput = document.getElementById('universityOther');
+      var selectedValue = '';
+      var isOpen = false;
+
+      function render(text) {
+        text = (text || '').toLowerCase().trim();
+        var matched = [];
+        for (var i = 0; i < universities.length; i++) {
+          if (!text || universities[i].toLowerCase().indexOf(text) !== -1) {
+            matched.push(universities[i]);
+          }
+        }
+        var html = '';
+        for (var j = 0; j < matched.length; j++) {
+          var s = matched[j] === selectedValue ? ' selected' : '';
+          html += '<div class="combobox-option' + s + '" data-value="' + matched[j].replace(/"/g, '&quot;') + '">' + matched[j] + '</div>';
+        }
+        if (text && (matched.length === 0 || 'autre'.indexOf(text) !== -1)) {
+          html += '<div class="combobox-option other-option" data-value="__other__">Autre \u00E9tablissement...</div>';
+        }
+        list.innerHTML = html;
+        if (!isOpen && matched.length > 0) openDropdown();
+      }
+
+      function openDropdown() { isOpen = true; list.classList.add('open'); input.setAttribute('aria-expanded', true); }
+      function closeDropdown() { isOpen = false; list.classList.remove('open'); input.setAttribute('aria-expanded', false); }
+
+      input.addEventListener('input', function() { render(this.value); });
+      input.addEventListener('focus', function() { render(this.value); });
+      input.addEventListener('blur', function() { setTimeout(closeDropdown, 200); });
+
+      list.addEventListener('mousedown', function(e) {
+        var opt = e.target.closest('.combobox-option');
+        if (!opt) return;
+        var val = opt.getAttribute('data-value');
+        if (val === '__other__') {
+          hidden.value = '__other__';
+          input.value = 'Autre \u00E9tablissement...';
+          otherWrapper.classList.add('visible');
+          otherInput.focus();
+        } else {
+          hidden.value = val;
+          input.value = val;
+          otherWrapper.classList.remove('visible');
+          otherInput.value = '';
+        }
+        selectedValue = val;
+        closeDropdown();
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!wrapper.contains(e.target)) closeDropdown();
+      });
+
+      // --- init combobox for edit mode ---
+      var currentVal = hidden.value;
+      if (currentVal && currentVal !== '__other__') {
+        selectedValue = currentVal;
+        input.value = currentVal;
+      } else if (currentVal === '__other__') {
+        selectedValue = '__other__';
+        input.value = 'Autre \u00E9tablissement...';
+        otherWrapper.classList.add('visible');
+        var otherVal = document.getElementById('universityOther').value;
+        if (otherVal) otherInput.value = otherVal;
+      }
+
+      // ============ File Upload Drag & Drop ============
+      var uploadArea = document.getElementById('file-upload-area');
+      var uploadText = document.getElementById('file-upload-text');
+      var uploadName = document.getElementById('file-upload-name');
+      var fileInput = document.getElementById('cvFile');
+
+      uploadArea.addEventListener('click', function() { fileInput.click(); });
+
+      function handleFile(file) {
+        if (!file) return;
+        var ext = file.name.split('.').pop().toLowerCase();
+        if (ext !== 'pdf') {
+          uploadText.style.display = '';
+          uploadName.style.display = 'none';
+          uploadArea.classList.remove('has-file');
+          uploadArea.classList.add('error');
+          uploadText.textContent = 'Format non accept\u00E9 (PDF uniquement)';
+          fileInput.value = '';
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          uploadText.style.display = '';
+          uploadName.style.display = 'none';
+          uploadArea.classList.remove('has-file');
+          uploadArea.classList.add('error');
+          uploadText.textContent = 'Fichier trop volumineux (max 10 Mo)';
+          fileInput.value = '';
+          return;
+        }
+        uploadText.style.display = 'none';
+        uploadName.textContent = file.name;
+        uploadName.style.display = 'block';
+        uploadArea.classList.add('has-file');
+        uploadArea.classList.remove('error');
+      }
+
+      fileInput.addEventListener('change', function() {
+        handleFile(this.files && this.files[0]);
+      });
+
+      uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault(); e.stopPropagation();
+        this.classList.add('dragover');
+      });
+      uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault(); e.stopPropagation();
+        this.classList.remove('dragover');
+      });
+      uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault(); e.stopPropagation();
+        this.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          fileInput.files = e.dataTransfer.files;
+          handleFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      // ============ Client-side Validation ============
+      document.getElementById('applyForm').addEventListener('submit', function(e) {
+        var isDraft = e.submitter && e.submitter.value === 'draft';
+        if (isDraft) return;
+        var valid = true;
+
+        var fn = document.getElementById('firstName');
+        if (!fn.value.trim()) { fn.classList.add('error'); valid = false; }
+        else fn.classList.remove('error');
+
+        var ln = document.getElementById('lastName');
+        if (!ln.value.trim()) { ln.classList.add('error'); valid = false; }
+        else ln.classList.remove('error');
+
+        var em = document.getElementById('email');
+        if (!em.value.trim() || !em.value.includes('@')) { em.classList.add('error'); valid = false; }
+        else em.classList.remove('error');
+
+        var cni = document.getElementById('cni');
+        if (!cni.value.trim()) { cni.classList.add('error'); valid = false; }
+        else cni.classList.remove('error');
+
+        var ph = document.getElementById('phone');
+        if (!ph.value.trim()) { ph.classList.add('error'); valid = false; }
+        else ph.classList.remove('error');
+
+        var uni = document.getElementById('university');
+        if (!uni.value || uni.value === '__other__' && !document.getElementById('universityOther').value.trim()) {
+          document.getElementById('university-input').classList.add('error');
+          valid = false;
+        }
+
+        var major = document.getElementById('major');
+        if (!major.value.trim()) { major.classList.add('error'); valid = false; }
+        else major.classList.remove('error');
+
+        var isEdit = /*[[${!#strings.isEmpty(form.id)}]]*/ false;
+      var hasExistingCv = /*[[${form.existingCv}]]*/ false;
+
+      if (!fileInput.files || !fileInput.files[0]) {
+          if (isEdit && hasExistingCv) {
+            uploadArea.classList.remove('error');
+          } else if (!uploadArea.classList.contains('has-file')) {
+            uploadArea.classList.add('error');
+            valid = false;
+          }
+        } else {
+          uploadArea.classList.remove('error');
+        }
+
+        if (!valid) {
+          e.preventDefault();
+          return;
+        }
+
+        document.getElementById('submit-btn').disabled = true;
+        document.getElementById('submit-btn').classList.add('btn--loading');
+      });
+    })();
+  </script>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', function() {
+      document.getElementById('mainNav').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

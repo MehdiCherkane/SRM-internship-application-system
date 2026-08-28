@@ -1,26 +1,27 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tableau de bord — ONEP</title>
-  <link rel="stylesheet" th:href="@{/css/style.css(v=3)}">
+  <title>Tableau de bord â€” SRM</title>
+  <link rel="stylesheet" th:href="@{/css/style.css(v=5)}">
+  <meta name="_csrf_param" th:content="${_csrf.parameterName}">
+  <meta name="_csrf_token" th:content="${_csrf.token}">
 </head>
 <body>
   <div class="page-wrapper">
     <header class="page-header">
-      <a href="/admin/dashboard" class="page-header__logo">
-        <svg viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M17 2C17 2 5 16 5 24C5 30.5 10.5 33 17 33C23.5 33 29 30.5 29 24C29 16 17 2 17 2Z" fill="#0c4a6e"/>
-          <path d="M17 4C17 4 7 17 7 24C7 29 11 32 17 32C23 32 27 29 27 24C27 17 17 4 17 4Z" fill="#f0f9ff" opacity="0.15"/>
-          <path d="M11.5 24C13 22 15.5 21.5 17 23C18.5 24.5 21 25 23.5 24" stroke="#e0f2fe" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
-          <path d="M17 2C17 2 5 16 5 24C5 30.5 10.5 33 17 33C23.5 33 29 30.5 29 24C29 16 17 2 17 2Z" stroke="#0c4a6e" stroke-width="1.5"/>
-        </svg>
+      <a th:href="@{/admin/dashboard}" class="page-header__logo">
+        <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="SRM" class="page-header__logo-img" />
         Administration
       </a>
-      <nav class="page-header__nav">
-        <form method="post" th:action="@{/admin/logout}" style="display:inline">
-          <button type="submit" class="btn btn--outline btn--sm">Déconnexion</button>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <nav class="page-header__nav" id="mainNav">
+        <a th:href="@{/admin/stats}" class="btn btn--outline btn--sm">Statistiques</a>
+        <form method="post" th:action="@{/logout}">
+          <button type="submit" class="btn btn--outline btn--sm">DÃ©connexion</button>
         </form>
       </nav>
     </header>
@@ -30,15 +31,24 @@
         <h1>Candidatures</h1>
       </div>
 
+      <div class="search-bar">
+        <form method="get" th:action="@{/admin/dashboard}" class="search-form">
+          <input type="search" name="q" class="search-input" placeholder="Rechercher par nom, email, fili&egrave;re, universit&eacute;..." th:value="${searchQuery}">
+          <button type="submit" class="btn btn--primary btn--sm">Rechercher</button>
+          <a th:if="${searchQuery}" th:href="@{/admin/dashboard}" class="btn btn--outline btn--sm">Effacer</a>
+        </form>
+      </div>
+
       <div class="filter-tabs" role="tablist">
         <a th:href="@{/admin/dashboard}" class="filter-tab" th:classappend="${currentFilter == null} ? 'active'" role="tab">Toutes</a>
-        <a th:href="@{/admin/dashboard?status=PENDING}" class="filter-tab" th:classappend="${currentFilter == 'PENDING'} ? 'active'" role="tab">En attente</a>
-        <a th:href="@{/admin/dashboard?status=ACCEPTED}" class="filter-tab" th:classappend="${currentFilter == 'ACCEPTED'} ? 'active'" role="tab">Acceptées</a>
-        <a th:href="@{/admin/dashboard?status=REJECTED}" class="filter-tab" th:classappend="${currentFilter == 'REJECTED'} ? 'active'" role="tab">Refusées</a>
+        <a th:href="@{/admin/dashboard?status=SUBMITTED}" class="filter-tab" th:classappend="${currentFilter == 'SUBMITTED'} ? 'active'" role="tab">Soumises</a>
+        <a th:href="@{/admin/dashboard?status=UNDER_REVIEW}" class="filter-tab" th:classappend="${currentFilter == 'UNDER_REVIEW'} ? 'active'" role="tab">En examen</a>
+        <a th:href="@{/admin/dashboard?status=ACCEPTED}" class="filter-tab" th:classappend="${currentFilter == 'ACCEPTED'} ? 'active'" role="tab">AcceptÃ©es</a>
+        <a th:href="@{/admin/dashboard?status=REJECTED}" class="filter-tab" th:classappend="${currentFilter == 'REJECTED'} ? 'active'" role="tab">RefusÃ©es</a>
       </div>
 
       <div th:if="${#lists.isEmpty(applications)}" class="card card--centered" style="padding:3rem 2rem;">
-        <p style="color:var(--muted);">Aucune candidature trouvée.</p>
+        <p style="color:var(--muted);">Aucune candidature trouvÃ©e.</p>
       </div>
 
       <div class="card" th:if="${!#lists.isEmpty(applications)}" style="padding:0;overflow:hidden;">
@@ -47,10 +57,8 @@
             <thead>
               <tr>
                 <th>Nom complet</th>
-                <th>Email</th>
-                <th>Téléphone</th>
-                <th>Université</th>
-                <th>Filière</th>
+                <th>UniversitÃ©</th>
+                <th>FiliÃ¨re</th>
                 <th>Date de soumission</th>
                 <th>Statut</th>
                 <th>Actions</th>
@@ -58,14 +66,12 @@
             </thead>
             <tbody>
               <tr th:each="app : ${applications}" th:attr="data-href=@{/admin/application/{id}(id=${app.id})}" style="cursor:pointer" onclick="location.href=this.dataset.href">
-                <td th:text="${app.firstName} + ' ' + ${app.lastName}">John Doe</td>
-                <td th:text="${app.email}">john@example.com</td>
-                <td th:text="${app.phone}">+212 6 00 00 00 00</td>
+                <td th:text="${app.firstName + ' ' + app.lastName}">John Doe</td>
                 <td th:text="${app.university}">Universit\u00e9 Mohammed V</td>
                 <td th:text="${app.major}">G\u00e9nie Informatique</td>
-                <td th:text="${#temporals.format(app.submittedDate, 'dd/MM/yyyy')}">12/03/2024</td>
+                <td th:text="${app.submittedDate != null ? #temporals.format(app.submittedDate, 'dd/MM/yyyy') : 'â€”'}">12/03/2024</td>
                 <td>
-                  <span class="badge" th:classappend="${app.status.name() == 'PENDING'} ? 'badge--pending' : (${app.status.name() == 'ACCEPTED'} ? 'badge--accepted' : 'badge--rejected')" th:text="${app.status.name() == 'PENDING'} ? 'En attente' : (${app.status.name() == 'ACCEPTED'} ? 'Acceptée' : 'Refusée')">En attente</span>
+                  <span class="badge" th:classappend="${'badge--' + app.status.cssClass}" th:text="${app.status.label}">Soumise</span>
                 </td>
                 <td onclick="event.stopPropagation()">
                   <div class="action-buttons">
@@ -73,15 +79,19 @@
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                       Voir CV
                     </a>
-                    <button th:if="${app.status.name() == 'PENDING'}" class="btn btn--accept btn--sm" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName},data-email=${app.email}" onclick="openModal(this, 'accept')">
+                    <button th:if="${app.status.name() == 'SUBMITTED'}" class="btn btn--accept btn--sm" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName}" onclick="openModal(this, 'review')">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>
+                      Examiner
+                    </button>
+                    <button th:if="${app.status.name() == 'UNDER_REVIEW'}" class="btn btn--accept btn--sm" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName}" onclick="openModal(this, 'accept')">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                       Accepter
                     </button>
-                    <button th:if="${app.status.name() == 'PENDING'}" class="btn btn--reject btn--sm" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName},data-email=${app.email}" onclick="openModal(this, 'reject')">
+                    <button th:if="${app.status.name() == 'UNDER_REVIEW'}" class="btn btn--reject btn--sm" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName}" onclick="openModal(this, 'reject')">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                       Refuser
                     </button>
-                    <button th:if="${app.status.name() == 'REJECTED' and currentFilter == 'REJECTED'}" class="btn btn--delete btn--sm" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName},data-email=${app.email}" onclick="openModal(this, 'delete')">
+                    <button th:if="${app.status.name() == 'REJECTED' and currentFilter == 'REJECTED'}" class="btn btn--delete btn--sm" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName}" onclick="openModal(this, 'delete')">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
                       Supprimer
                     </button>
@@ -95,7 +105,7 @@
     </main>
 
     <footer class="page-footer">
-      &copy; 2026 ONEP — Administration
+      &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM â€” Administration
     </footer>
   </div>
 
@@ -106,7 +116,7 @@
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       </div>
       <div class="modal__title" id="modal-title">Confirmer l'action</div>
-      <div class="modal__desc" id="modal-desc">Un email sera envoyé au candidat.</div>
+      <div class="modal__desc" id="modal-desc">Un email sera envoyÃ© au candidat.</div>
       <div class="modal__candidate" id="modal-candidate"></div>
       <div class="modal__actions">
         <button class="btn btn--outline" onclick="closeModal()">Annuler</button>
@@ -115,9 +125,9 @@
     </div>
   </div>
 
-  <script th:inline="javascript">
-    var csrfToken = /*[[${_csrf.token}]]*/ '';
-    var csrfParam = /*[[${_csrf.parameterName}]]*/ '';
+  <script>
+    var csrfToken = document.querySelector('meta[name="_csrf_token"]').content;
+    var csrfParam = document.querySelector('meta[name="_csrf_param"]').content;
     var pendingAction = null;
     var pendingId = null;
 
@@ -125,34 +135,38 @@
       pendingAction = action;
       pendingId = btn.getAttribute('data-id');
       var name = btn.getAttribute('data-name');
-      var email = btn.getAttribute('data-email');
+      var email = '';
 
       var isAccept = action === 'accept';
+      var isReview = action === 'review';
       var isDelete = action === 'delete';
 
-      document.getElementById('modal-candidate').textContent = name + ' — ' + email;
+      document.getElementById('modal-candidate').textContent = name;
 
       if (isDelete) {
-        document.getElementById('modal-desc').textContent = 'Supprimer définitivement cette candidature ? Le CV sera également effacé.';
+        document.getElementById('modal-desc').textContent = 'Supprimer dÃ©finitivement cette candidature ? Le CV sera Ã©galement effacÃ©.';
         document.getElementById('modal-title').textContent = 'Supprimer la candidature';
+      } else if (isReview) {
+        document.getElementById('modal-desc').textContent = 'Placer cette candidature en cours d\'examen ? Elle sera verrouillÃ©e pour le candidat.';
+        document.getElementById('modal-title').textContent = 'Commencer l\'examen';
       } else {
         document.getElementById('modal-desc').textContent = isAccept
-          ? 'Accepter cette candidature ? Un email sera envoyé au candidat.'
-          : 'Refuser cette candidature ? Un email sera envoyé au candidat.';
+          ? 'Accepter cette candidature ? Un email sera envoyÃ© au candidat.'
+          : 'Refuser cette candidature ? Un email sera envoyÃ© au candidat.';
         document.getElementById('modal-title').textContent = isAccept ? 'Accepter la candidature' : 'Refuser la candidature';
       }
 
       var icon = document.getElementById('modal-icon');
-      icon.className = 'modal__icon ' + (isDelete ? 'modal__icon--reject' : (isAccept ? 'modal__icon--accept' : 'modal__icon--reject'));
+      icon.className = 'modal__icon ' + (isDelete ? 'modal__icon--reject' : (isAccept || isReview ? 'modal__icon--accept' : 'modal__icon--reject'));
       icon.innerHTML = isDelete
         ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>'
-        : (isAccept
+        : ((isAccept || isReview)
           ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
           : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>');
 
       var confirmBtn = document.getElementById('modal-confirm-btn');
-      confirmBtn.className = 'btn btn--' + (isDelete ? 'danger' : (isAccept ? 'success' : 'danger'));
-      confirmBtn.textContent = isDelete ? 'Supprimer' : (isAccept ? 'Accepter' : 'Refuser');
+      confirmBtn.className = 'btn btn--' + (isDelete ? 'danger' : (isAccept || isReview ? 'success' : 'danger'));
+      confirmBtn.textContent = isDelete ? 'Supprimer' : (isReview ? 'Commencer' : (isAccept ? 'Accepter' : 'Refuser'));
 
       document.getElementById('confirm-modal').classList.add('open');
     }
@@ -185,6 +199,10 @@
 
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closeModal();
+    });
+
+    document.getElementById('navToggle').addEventListener('click', function() {
+      document.getElementById('mainNav').classList.toggle('open');
     });
   </script>
 </body>

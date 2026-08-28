@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${app.firstName + ' ' + app.lastName + ' â€” SRM'}">Candidature â€” SRM</title>
+  <link rel="stylesheet" th:href="@{/css/style.css(v=5)}">
+</head>
+<body>
+  <div class="page-wrapper">
+    <header class="page-header">
+      <a href="/" class="page-header__logo">
+        <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="SRM" class="page-header__logo-img" />
+      </a>
+      <span class="user-greeting" th:text="${'Bonjour, ' + app.firstName}">Bonjour, John</span>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <nav class="page-header__nav" id="mainNav">
+        <a th:href="@{/applicant/dashboard}" class="btn btn--outline btn--sm">Mes candidatures</a>
+        <form method="post" th:action="@{/logout}">
+          <button type="submit" class="btn btn--outline btn--sm">D&eacute;connexion</button>
+        </form>
+      </nav>
+    </header>
+
+    <main class="page-main page-main--wide">
+      <div class="detail-header">
+        <a th:href="@{/applicant/dashboard}" class="detail-back">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Retour
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="detail-hero">
+          <div class="detail-avatar" th:text="${app.firstName.substring(0,1) + app.lastName.substring(0,1)}">JD</div>
+          <div class="detail-hero-info">
+            <h1 th:text="${app.firstName + ' ' + app.lastName}">John Doe</h1>
+            <div class="detail-meta">
+              <span th:if="${app.email != null && !app.email.isEmpty()}" th:text="${app.email}">email</span>
+              <span th:if="${app.phone != null && !app.phone.isEmpty()}" th:text="${app.phone}">phone</span>
+            </div>
+          </div>
+          <div style="margin-left:auto;flex-shrink:0;">
+            <span class="badge" th:classappend="${'badge--' + app.status.cssClass}" th:text="${app.status.label}">Brouillon</span>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-field">
+            <div class="detail-field__label">Email</div>
+            <div class="detail-field__value" th:text="${app.email}">john@example.com</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">CIN</div>
+            <div class="detail-field__value" th:text="${app.cni}">AB123456</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">T&eacute;l&eacute;phone</div>
+            <div class="detail-field__value" th:text="${app.phone}">+212 6 00 00 00 00</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">Universit&eacute;</div>
+            <div class="detail-field__value" th:text="${app.university}">Universit&eacute; Mohammed V</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">Fili&egrave;re</div>
+            <div class="detail-field__value" th:text="${app.major}">G&eacute;nie Informatique</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">Date de soumission</div>
+            <div class="detail-field__value" th:text="${app.submittedDate != null ? #temporals.format(app.submittedDate, 'dd/MM/yyyy HH:mm') : 'Non soumise'}">12/03/2024</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field__label">Statut</div>
+            <div class="detail-field__value" th:text="${app.status.label}">Brouillon</div>
+          </div>
+        </div>
+
+        <div class="detail-cover" th:if="${app.coverMessage != null && !app.coverMessage.isEmpty()}" th:text="${app.coverMessage}">Lettre de motivation...</div>
+
+        <a th:href="@{/applicant/cv/{id}(id=${app.id})}" class="detail-cv-link" th:if="${app.cvFilePath != null}" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Voir mon CV
+        </a>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', function() {
+      document.getElementById('mainNav').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

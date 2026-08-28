@@ -1,54 +1,89 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title th:text="${app.firstName + ' ' + app.lastName + ' — ONEP'}">Candidat — ONEP</title>
-  <link rel="stylesheet" th:href="@{/css/style.css(v=3)}">
+  <title th:text="${app.firstName + ' ' + app.lastName + ' â€” SRM'}">Candidat â€” SRM</title>
+  <link rel="stylesheet" th:href="@{/css/style.css(v=5)}">
+  <meta name="_csrf_param" th:content="${_csrf.parameterName}">
+  <meta name="_csrf_token" th:content="${_csrf.token}">
 </head>
 <body>
   <div class="page-wrapper">
     <header class="page-header">
-      <a href="/admin/dashboard" class="page-header__logo">
-        <svg viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M17 2C17 2 5 16 5 24C5 30.5 10.5 33 17 33C23.5 33 29 30.5 29 24C29 16 17 2 17 2Z" fill="#0c4a6e"/>
-          <path d="M17 4C17 4 7 17 7 24C7 29 11 32 17 32C23 32 27 29 27 24C27 17 17 4 17 4Z" fill="#f0f9ff" opacity="0.15"/>
-          <path d="M11.5 24C13 22 15.5 21.5 17 23C18.5 24.5 21 25 23.5 24" stroke="#e0f2fe" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
-          <path d="M17 2C17 2 5 16 5 24C5 30.5 10.5 33 17 33C23.5 33 29 30.5 29 24C29 16 17 2 17 2Z" stroke="#0c4a6e" stroke-width="1.5"/>
-        </svg>
+      <a th:href="@{/admin/dashboard}" class="page-header__logo">
+        <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="SRM" class="page-header__logo-img" />
         Administration
       </a>
-      <nav class="page-header__nav">
-        <form method="post" th:action="@{/admin/logout}" style="display:inline">
-          <button type="submit" class="btn btn--outline btn--sm">Déconnexion</button>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <nav class="page-header__nav" id="mainNav">
+        <form method="post" th:action="@{/logout}">
+          <button type="submit" class="btn btn--outline btn--sm">DÃ©connexion</button>
         </form>
       </nav>
     </header>
 
-    <main class="page-main page-main--wide">
+<main class="page-main page-main--wide">
       <div class="detail-header">
-        <a href="/admin/dashboard" class="detail-back">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <a th:href="@{/admin/dashboard}" class="detail-back">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           Retour au tableau de bord
         </a>
       </div>
 
-      <div class="card">
-        <div class="detail-hero">
-          <div class="detail-avatar" th:text="${#strings.substring(app.firstName, 0, 1)} + ${#strings.substring(app.lastName, 0, 1)}">JD</div>
-          <div class="detail-hero-info">
-            <h1 th:text="${app.firstName} + ' ' + ${app.lastName}">John Doe</h1>
-            <div class="detail-meta">
-              <span th:text="${#temporals.format(app.submittedDate, 'dd MMMM yyyy')}">12 mars 2024</span>
-              <span> · </span>
-              <span class="badge" th:classappend="${app.status.name() == 'PENDING'} ? 'badge--pending' : (${app.status.name() == 'ACCEPTED'} ? 'badge--accepted' : 'badge--rejected')" th:text="${app.status.name() == 'PENDING'} ? 'En attente' : (${app.status.name() == 'ACCEPTED'} ? 'Acceptée' : 'Refusée')">En attente</span>
+      <!-- Header: candidate identity + status + actions pinned top-right -->
+      <div class="detail-header-row">
+        <div class="detail-header-row__identity">
+          <div class="detail-avatar" th:text="${#strings.substring(app.firstName, 0, 1) + #strings.substring(app.lastName, 0, 1)}">JD</div>
+          <div>
+            <h1 class="detail-header-row__name" th:text="${app.firstName + ' ' + app.lastName}">John Doe</h1>
+            <div class="detail-header-row__meta">
+              <span th:text="${app.email}">john@example.com</span>
+              <span th:if="${app.phone != null}" th:text="${app.phone}">+212 6 00 00 00 00</span>
             </div>
           </div>
         </div>
 
-        <div class="detail-grid">
+        <div class="detail-header-row__actions">
+          <span class="badge" th:classappend="${'badge--' + app.status.cssClass}" th:text="${app.status.label}">Soumise</span>
+          <span class="badge badge--date" th:if="${app.submittedDate != null}" th:text="'Soumise le ' + ${#temporals.format(app.submittedDate, 'dd/MM/yyyy')}">Soumise le 12/03/2024</span>
+
+          <div class="detail-actions" th:if="${app.status.name() == 'SUBMITTED'}">
+            <button class="btn btn--accept" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName}" onclick="openModal(this, 'review')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>
+              Commencer l'examen
+            </button>
+          </div>
+          <div class="detail-actions" th:if="${app.status.name() == 'UNDER_REVIEW'}">
+            <button class="btn btn--accept" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName}" onclick="openModal(this, 'accept')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Accepter
+            </button>
+            <button class="btn btn--reject" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName}" onclick="openModal(this, 'reject')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Refuser
+            </button>
+          </div>
+          <div class="detail-actions" th:if="${app.status.name() == 'REJECTED'}">
+            <button class="btn btn--delete" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName}" onclick="openModal(this, 'delete')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main grid: personal info | academic background -->
+      <div class="detail-grid">
+        <section class="detail-section">
+          <h3 class="detail-section__title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Information Personnelle
+          </h3>
           <div class="detail-field">
-            <span class="detail-field__label">Prénom</span>
+            <span class="detail-field__label">Pr&eacute;nom</span>
             <span class="detail-field__value" th:text="${app.firstName}">John</span>
           </div>
           <div class="detail-field">
@@ -60,51 +95,61 @@
             <span class="detail-field__value" th:text="${app.email}">john@example.com</span>
           </div>
           <div class="detail-field">
-            <span class="detail-field__label">Téléphone</span>
+            <span class="detail-field__label">CIN</span>
+            <span class="detail-field__value" th:text="${app.cni}">AB123456</span>
+          </div>
+          <div class="detail-field">
+            <span class="detail-field__label">T&eacute;l&eacute;phone</span>
             <span class="detail-field__value" th:text="${app.phone}">+212 6 00 00 00 00</span>
           </div>
+        </section>
+
+        <section class="detail-section">
+          <h3 class="detail-section__title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            Parcours Acad&eacute;mique
+          </h3>
           <div class="detail-field">
-            <span class="detail-field__label">Université</span>
-            <span class="detail-field__value" th:text="${app.university}">Université Mohammed V</span>
+            <span class="detail-field__label">Universit&eacute;</span>
+            <span class="detail-field__value" th:text="${app.university}">Universit&eacute; Mohammed V</span>
           </div>
           <div class="detail-field">
-            <span class="detail-field__label">Filière</span>
-            <span class="detail-field__value" th:text="${app.major}">Génie Informatique</span>
+            <span class="detail-field__label">Fili&egrave;re</span>
+            <span class="detail-field__value" th:text="${app.major}">G&eacute;nie Informatique</span>
           </div>
-          <div class="detail-field full" th:if="${app.coverMessage != null and !app.coverMessage.isEmpty()}">
-            <span class="detail-field__label">Message de motivation</span>
+          <div class="detail-field">
+            <span class="detail-field__label">Date de soumission</span>
+            <span class="detail-field__value" th:text="${app.submittedDate != null ? #temporals.format(app.submittedDate, 'dd/MM/yyyy') : 'Non soumise'}">12/03/2024</span>
           </div>
-        </div>
-
-        <div class="detail-cover" th:if="${app.coverMessage != null and !app.coverMessage.isEmpty()}" th:text="${app.coverMessage}">...</div>
-
-        <a th:if="${app.cvFilePath != null}" th:href="@{/admin/cv/{id}(id=${app.id})}" class="detail-cv-link" target="_blank" rel="noopener">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          Voir le CV
-        </a>
-
-        <div class="detail-actions" th:if="${app.status.name() == 'PENDING'}">
-          <button class="btn btn--accept" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName},data-email=${app.email}" onclick="openModal(this, 'accept')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Accepter
-          </button>
-          <button class="btn btn--reject" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName},data-email=${app.email}" onclick="openModal(this, 'reject')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            Refuser
-          </button>
-        </div>
-
-        <div class="detail-actions" th:if="${app.status.name() == 'REJECTED'}">
-          <button class="btn btn--delete" th:attr="data-id=${app.id},data-name=${app.firstName + ' ' + app.lastName},data-email=${app.email}" onclick="openModal(this, 'delete')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-            Supprimer
-          </button>
-        </div>
+        </section>
       </div>
+
+      <section class="detail-section" th:if="${!#strings.isEmpty(app.coverMessage)}" style="margin-bottom:1.5rem;">
+        <h3 class="detail-section__title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Message de motivation
+        </h3>
+        <div class="detail-cover" style="margin-bottom:0;" th:text="${app.coverMessage}">...</div>
+      </section>
+
+      <section class="detail-section" th:if="${app.cvFilePath != null}">
+        <h3 class="detail-section__title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Curriculum Vitae
+        </h3>
+        <div class="cv-action-row">
+          <a th:href="@{/admin/cv/{id}(id=${app.id})}" class="detail-cv-link" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Ouvrir le CV
+          </a>
+          <span class="form-hint">Consultez l'aper&ccedil;u PDF ci-dessous ou ouvrez le fichier dans un nouvel onglet.</span>
+        </div>
+        <iframe th:src="@{/admin/cv/{id}(id=${app.id})}" class="cv-iframe" title="Aper&ccedil;u du CV du candidat"></iframe>
+      </section>
     </main>
 
     <footer class="page-footer">
-      &copy; 2026 ONEP — Administration
+      &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM â€” Administration
     </footer>
   </div>
 
@@ -115,7 +160,7 @@
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       </div>
       <div class="modal__title" id="modal-title">Confirmer l'action</div>
-      <div class="modal__desc" id="modal-desc">Un email sera envoyé au candidat.</div>
+      <div class="modal__desc" id="modal-desc">Un email sera envoyÃ© au candidat.</div>
       <div class="modal__candidate" id="modal-candidate"></div>
       <div class="modal__actions">
         <button class="btn btn--outline" onclick="closeModal()">Annuler</button>
@@ -124,9 +169,9 @@
     </div>
   </div>
 
-  <script th:inline="javascript">
-    var csrfToken = /*[[${_csrf.token}]]*/ '';
-    var csrfParam = /*[[${_csrf.parameterName}]]*/ '';
+  <script>
+    var csrfToken = document.querySelector('meta[name="_csrf_token"]').content;
+    var csrfParam = document.querySelector('meta[name="_csrf_param"]').content;
     var pendingAction = null;
     var pendingId = null;
 
@@ -134,34 +179,38 @@
       pendingAction = action;
       pendingId = btn.getAttribute('data-id');
       var name = btn.getAttribute('data-name');
-      var email = btn.getAttribute('data-email');
+      var email = '';
 
       var isAccept = action === 'accept';
+      var isReview = action === 'review';
       var isDelete = action === 'delete';
 
-      document.getElementById('modal-candidate').textContent = name + ' — ' + email;
+      document.getElementById('modal-candidate').textContent = name;
 
       if (isDelete) {
-        document.getElementById('modal-desc').textContent = 'Supprimer définitivement cette candidature ? Le CV sera également effacé.';
+        document.getElementById('modal-desc').textContent = 'Supprimer dÃ©finitivement cette candidature ? Le CV sera Ã©galement effacÃ©.';
         document.getElementById('modal-title').textContent = 'Supprimer la candidature';
+      } else if (isReview) {
+        document.getElementById('modal-desc').textContent = 'Placer cette candidature en cours d\'examen ? Elle sera verrouillÃ©e pour le candidat.';
+        document.getElementById('modal-title').textContent = 'Commencer l\'examen';
       } else {
         document.getElementById('modal-desc').textContent = isAccept
-          ? 'Accepter cette candidature ? Un email sera envoyé au candidat.'
-          : 'Refuser cette candidature ? Un email sera envoyé au candidat.';
+          ? 'Accepter cette candidature ? Un email sera envoyÃ© au candidat.'
+          : 'Refuser cette candidature ? Un email sera envoyÃ© au candidat.';
         document.getElementById('modal-title').textContent = isAccept ? 'Accepter la candidature' : 'Refuser la candidature';
       }
 
       var icon = document.getElementById('modal-icon');
-      icon.className = 'modal__icon ' + (isDelete ? 'modal__icon--reject' : (isAccept ? 'modal__icon--accept' : 'modal__icon--reject'));
+      icon.className = 'modal__icon ' + (isDelete ? 'modal__icon--reject' : (isAccept || isReview ? 'modal__icon--accept' : 'modal__icon--reject'));
       icon.innerHTML = isDelete
         ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>'
-        : (isAccept
+        : ((isAccept || isReview)
           ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
           : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>');
 
       var confirmBtn = document.getElementById('modal-confirm-btn');
-      confirmBtn.className = 'btn btn--' + (isDelete ? 'danger' : (isAccept ? 'success' : 'danger'));
-      confirmBtn.textContent = isDelete ? 'Supprimer' : (isAccept ? 'Accepter' : 'Refuser');
+      confirmBtn.className = 'btn btn--' + (isDelete ? 'danger' : (isAccept || isReview ? 'success' : 'danger'));
+      confirmBtn.textContent = isDelete ? 'Supprimer' : (isReview ? 'Commencer' : (isAccept ? 'Accepter' : 'Refuser'));
 
       document.getElementById('confirm-modal').classList.add('open');
     }
@@ -194,6 +243,10 @@
 
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closeModal();
+    });
+
+    document.getElementById('navToggle').addEventListener('click', function() {
+      document.getElementById('mainNav').classList.toggle('open');
     });
   </script>
 </body>

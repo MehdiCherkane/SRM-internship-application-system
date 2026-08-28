@@ -1,22 +1,17 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Candidature envoyée — ONEP</title>
-  <link rel="stylesheet" th:href="@{/css/style.css(v=3)}">
+  <title>Candidature envoyÃ©e â€” SRM</title>
+  <link rel="stylesheet" th:href="@{/css/style.css(v=5)}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
   <div class="page-wrapper">
     <header class="page-header">
-      <a href="/" class="page-header__logo">
-        <svg viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M17 2C17 2 5 16 5 24C5 30.5 10.5 33 17 33C23.5 33 29 30.5 29 24C29 16 17 2 17 2Z" fill="#0c4a6e"/>
-          <path d="M17 4C17 4 7 17 7 24C7 29 11 32 17 32C23 32 27 29 27 24C27 17 17 4 17 4Z" fill="#f0f9ff" opacity="0.15"/>
-          <path d="M11.5 24C13 22 15.5 21.5 17 23C18.5 24.5 21 25 23.5 24" stroke="#e0f2fe" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
-          <path d="M17 2C17 2 5 16 5 24C5 30.5 10.5 33 17 33C23.5 33 29 30.5 29 24C29 16 17 2 17 2Z" stroke="#0c4a6e" stroke-width="1.5"/>
-        </svg>
-        ONEP
+      <a th:href="@{/}" class="page-header__logo">
+        <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="SRM" class="page-header__logo-img" />
       </a>
     </header>
 
@@ -27,21 +22,24 @@
           <path d="M20 34l8 8 16-16" stroke="#059669" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
 
-        <h1>Candidature reçue !</h1>
+        <h1>Candidature reÃ§ue !</h1>
         <p class="subtitle" style="max-width:420px;margin-left:auto;margin-right:auto;">
-          Merci pour votre candidature. Notre équipe examinera votre dossier et vous recevrez une notification par email dès qu'une décision sera prise.
+          Merci pour votre candidature. Notre Ã©quipe examinera votre dossier et vous recevrez une notification par email dÃ¨s qu'une dÃ©cision sera prise.
         </p>
 
         <div class="success-actions">
-          <a href="https://www.onee.ma" class="btn btn--outline" target="_blank" rel="noopener">
-            Visiter le site de l'ONEE
+          <a th:href="@{/applicant/dashboard}" class="btn btn--primary btn--full" style="margin-bottom:0.75rem;">
+            <i class="fa-solid fa-list-check" aria-hidden="true"></i> Voir mes candidatures
+          </a>
+          <a th:href="@{/}" class="btn btn--outline btn--full">
+            <i class="fa-solid fa-house" aria-hidden="true"></i> Retour Ã  l'accueil
           </a>
         </div>
       </div>
     </main>
 
     <footer class="page-footer">
-      &copy; 2026 ONEP — Office National de l'Électricité et de l'Eau Potable
+      &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM STAGE KhÃ©nifra. Tous droits rÃ©servÃ©s.
     </footer>
   </div>
 </body>

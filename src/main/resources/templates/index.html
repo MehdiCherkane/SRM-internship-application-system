@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SRM STAGE Khénifra – Plateforme officielle de gestion des demandes de stage auprès de la SRM Khénifra." />
+  <meta name="keywords" content="SRM, stage, Khénifra, demande de stage, eau potable, Maroc" />
+  <meta name="author" content="SRM Khénifra" />
+  <meta property="og:title" content="SRM STAGE – Khénifra" />
+  <meta property="og:description" content="Déposez votre demande de stage en ligne auprès de la SRM Khénifra." />
+  <meta property="og:type" content="website" />
+  <title>SRM STAGE – Khénifra | Plateforme de Stage</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" th:href="@{/css/home.css}" />
+</head>
+<body>
+  <a class="skip-link" href="#accueil">Aller au contenu</a>
+
+  <!-- ══════════════════════════════════════
+       PAGE LOADER
+  ══════════════════════════════════════ -->
+  <div id="page-loader" role="status" aria-label="Chargement en cours">
+    <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="SRM Logo" class="loader-logo" />
+    <div class="loader-bar"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════ -->
+  <header id="rs-header">
+
+    <!-- Single header: identity + navigation + candidate access -->
+    <div class="site-header-inner">
+      <a th:href="@{/}" class="logo" aria-label="Accueil SRM STAGE">
+        <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="Logo SRM" />
+        <div class="logo-text">
+          <div class="logo-title">SRM STAGE</div>
+          <div class="logo-sub">Khénifra</div>
+        </div>
+      </a>
+
+      <nav class="site-nav" aria-label="Navigation principale">
+        <ul class="main-menu">
+          <li class="active"><a th:href="@{/}">Accueil</a></li>
+          <li class="menu-has-children">
+            <a href="#apropos">Qui sommes-nous<span class="caret" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span></a>
+            <ul class="submenu">
+              <li><a href="#apropos">Présentation</a></li>
+              <li><a href="#chiffres">Chiffres Clés</a></li>
+              <li><a href="#comment">Comment postuler</a></li>
+            </ul>
+          </li>
+          <li class="menu-has-children">
+            <a href="#domaines">Domaines de stage<span class="caret" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span></a>
+            <ul class="submenu">
+              <li><a href="#domaines" data-tab="0">Génie Civil</a></li>
+              <li><a href="#domaines" data-tab="1">Eau &amp; Assainissement</a></li>
+              <li><a href="#domaines" data-tab="2">Informatique &amp; RH</a></li>
+            </ul>
+          </li>
+          <li class="menu-has-children">
+            <a href="#candidat">Espace Candidat<span class="caret" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span></a>
+            <ul class="submenu">
+              <li><a th:href="@{/home/register}">Créer un compte</a></li>
+              <li><a th:href="@{/home/login}">Connexion</a></li>
+              <li><a href="#faq">Questions fréquentes</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <a th:href="@{/home/login}" class="btn-connex" aria-label="Se connecter à mon espace candidat">
+          <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+          <span class="btn-connex-label">Connexion</span>
+        </a>
+        <button class="hamburger" id="hamburger-btn" aria-label="Ouvrir le menu de navigation" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Panel -->
+    <div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Navigation mobile">
+      <div class="mobile-menu-header">
+        <span class="mobile-menu-title">Menu</span>
+        <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Fermer le menu">&times;</button>
+      </div>
+      <ul class="mobile-menu-links">
+        <li><a th:href="@{/}" class="mobile-link"><i class="fa-solid fa-house fa-fw" aria-hidden="true"></i> Accueil</a></li>
+        <li><a href="#apropos" class="mobile-link"><i class="fa-solid fa-circle-info fa-fw" aria-hidden="true"></i> Qui sommes-nous</a></li>
+        <li><a href="#chiffres" class="mobile-link"><i class="fa-solid fa-chart-simple fa-fw" aria-hidden="true"></i> Chiffres Clés</a></li>
+        <li><a href="#comment" class="mobile-link"><i class="fa-solid fa-list-ol fa-fw" aria-hidden="true"></i> Comment postuler</a></li>
+        <li><a href="#domaines" class="mobile-link"><i class="fa-solid fa-briefcase fa-fw" aria-hidden="true"></i> Domaines de stage</a></li>
+        <li><a href="#domaines" class="mobile-link" data-tab="0"><i class="fa-solid fa-helmet-safety fa-fw" aria-hidden="true"></i> Génie Civil</a></li>
+        <li><a href="#domaines" class="mobile-link" data-tab="1"><i class="fa-solid fa-droplet fa-fw" aria-hidden="true"></i> Eau &amp; Assainissement</a></li>
+        <li><a href="#domaines" class="mobile-link" data-tab="2"><i class="fa-solid fa-laptop-code fa-fw" aria-hidden="true"></i> Informatique &amp; RH</a></li>
+        <li><a href="#faq" class="mobile-link"><i class="fa-solid fa-circle-question fa-fw" aria-hidden="true"></i> Questions fréquentes</a></li>
+        <li class="mobile-menu-divider" role="separator"></li>
+        <li><a th:href="@{/home/login}" class="mobile-link mobile-link--green"><i class="fa-solid fa-right-to-bracket fa-fw" aria-hidden="true"></i> Connexion</a></li>
+        <li><a th:href="@{/home/register}" class="mobile-link mobile-link--primary"><i class="fa-solid fa-user-plus fa-fw" aria-hidden="true"></i> Créer un compte</a></li>
+      </ul>
+    </div>
+    <div class="mobile-overlay" id="mobile-overlay"></div>
+  </header>
+
+  <main>
+
+    <!-- ══════════════════════════════════════
+         HERO SLIDER
+    ══════════════════════════════════════ -->
+    <section class="hero-slider" id="accueil" aria-label="Section d'accueil">
+      <div class="hero-slides">
+
+        <!-- Slide 1 -->
+        <div class="slide active">
+          <div class="slide-bg" style="background-image:url('/hero-home/onep.jpg')"></div>
+          <div class="slide-overlay"></div>
+          <div class="slide-content">
+            <span class="slide-kicker">SRM STAGE – Khénifra</span>
+            <h1 class="slide-title">Bienvenue sur la plateforme<br />de demande de stage</h1>
+            <p class="slide-sub">
+              Déposez votre demande de stage en ligne auprès de la SRM Khénifra
+              et suivez facilement l'avancement de votre dossier.
+            </p>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;">
+              <a href="#domaines" class="btn-hero">
+                <i class="fa-solid fa-briefcase" aria-hidden="true"></i> Découvrir les domaines
+              </a>
+              <a th:href="@{/home/register}" class="btn-hero btn-hero--ghost">
+                <i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Postuler maintenant
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide">
+          <div class="slide-bg" style="background-image:url('/hero-home/SRM-image.jpeg')"></div>
+          <div class="slide-overlay"></div>
+          <div class="slide-content">
+            <span class="slide-kicker">Processus simplifié</span>
+            <h1 class="slide-title">Comment postuler ?<br />En 4 étapes simples</h1>
+            <p class="slide-sub">
+              Créez votre compte, remplissez le formulaire, joignez votre CV
+              et suivez votre candidature en temps réel.
+            </p>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;">
+              <a href="#comment" class="btn-hero">
+                <i class="fa-solid fa-list-ol" aria-hidden="true"></i> Voir les étapes
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide">
+          <div class="slide-bg" style="background-image:url('/hero-home/onep.jpg')"></div>
+          <div class="slide-overlay"></div>
+          <div class="slide-content">
+            <span class="slide-kicker">Plusieurs domaines</span>
+            <h1 class="slide-title">Génie Civil, Eau &amp; Assainissement,<br />Informatique &amp; RH</h1>
+            <p class="slide-sub">
+              La SRM Khénifra accueille des stagiaires dans de nombreux domaines
+              pour une expérience professionnelle concrète.
+            </p>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;">
+              <a href="#domaines" class="btn-hero">
+                <i class="fa-solid fa-briefcase" aria-hidden="true"></i> Découvrir les domaines
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="slider-arrow slider-prev" id="slider-prev" aria-label="Diapositive précédente">
+        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+      </button>
+      <button class="slider-arrow slider-next" id="slider-next" aria-label="Diapositive suivante">
+        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      </button>
+      <div class="slider-dots" id="slider-dots" role="tablist" aria-label="Navigation des diapositives"></div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         PROCESS / STEPS
+    ══════════════════════════════════════ -->
+    <section class="steps-section" id="comment" aria-label="Comment postuler">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="sub-text">Découvrir</span>
+          <h2>Comment postuler ?</h2>
+          <p>Quatre étapes simples pour soumettre votre demande de stage auprès de la SRM Khénifra.</p>
+        </div>
+
+        <div class="step-grid reveal">
+          <article class="step-box step-box--featured">
+            <span class="step-ribbon">Commencez ici</span>
+            <div class="step-num" aria-hidden="true">01</div>
+            <div class="step-icon"><i class="fa-solid fa-user-plus" aria-hidden="true"></i></div>
+            <h3>Créez un compte</h3>
+            <p>Inscrivez-vous gratuitement sur la plateforme avec votre adresse e-mail universitaire.</p>
+          </article>
+          <article class="step-box">
+            <div class="step-num" aria-hidden="true">02</div>
+            <div class="step-icon"><i class="fa-solid fa-file-pen" aria-hidden="true"></i></div>
+            <h3>Remplissez le formulaire</h3>
+            <p>Complétez votre dossier de candidature avec toutes les informations requises.</p>
+          </article>
+          <article class="step-box">
+            <div class="step-num" aria-hidden="true">03</div>
+            <div class="step-icon"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></div>
+            <h3>Soumettez vos documents</h3>
+            <p>Joignez votre CV au format PDF et validez votre candidature en un clic.</p>
+          </article>
+          <article class="step-box">
+            <div class="step-num" aria-hidden="true">04</div>
+            <div class="step-icon"><i class="fa-solid fa-bell" aria-hidden="true"></i></div>
+            <h3>Suivez votre candidature</h3>
+            <p>Recevez des notifications et suivez l'avancement de votre dossier en temps réel.</p>
+          </article>
+        </div>
+
+        <div class="steps-cta reveal">
+          <a th:href="@{/home/register}" class="btn-green">
+            <i class="fa-solid fa-user-plus" aria-hidden="true"></i> Créer mon compte
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         ABOUT
+    ══════════════════════════════════════ -->
+    <section class="about-section" id="apropos" aria-label="À propos de SRM Khénifra">
+      <div class="container">
+        <div class="about-inner">
+          <!-- Visual -->
+          <div class="about-gallery reveal-left">
+            <div class="about-gallery-main">
+              <img th:src="@{/hero-home/SRM-image.jpeg}" alt="Station de traitement — SRM Khénifra" loading="lazy" />
+            </div>
+            <div class="about-gallery-thumbs">
+              <img th:src="@{/hero-home/onep.jpg}" alt="Infrastructure SRM" loading="lazy" />
+              <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="Logo SRM" loading="lazy" />
+            </div>
+            <div class="about-badge-box">
+              <div class="num">+250</div>
+              <div class="lbl">Stagiaires<br />accueillis</div>
+            </div>
+          </div>
+
+          <!-- Text -->
+          <div class="about-text reveal-right">
+            <span class="sub-text">SRM Khénifra</span>
+            <h2>Qui sommes-<span>nous</span> ?</h2>
+            <p>
+              La <strong>SRM Khénifra</strong> accueille des stagiaires dans plusieurs domaines —
+              <strong>Génie Civil</strong>, <strong>Traitement des Eaux</strong>,
+              <strong>Informatique</strong>, <strong>Laboratoire</strong>, <strong>Ressources Humaines</strong> —
+              afin de leur offrir une expérience professionnelle concrète.
+            </p>
+            <p>
+              Cette plateforme permet aux étudiants de déposer leur demande de stage en ligne,
+              suivre leur candidature et faciliter la communication avec l'administration.
+            </p>
+
+            <div class="about-services">
+              <div class="about-service">
+                <i class="fa-solid fa-laptop-file" aria-hidden="true"></i>
+                <div>
+                  <h4>Dépôt en ligne</h4>
+                  <p>CV, lettre de motivation et formulaire — tout se fait ici, sans vous déplacer.</p>
+                </div>
+              </div>
+              <div class="about-service">
+                <i class="fa-solid fa-timeline" aria-hidden="true"></i>
+                <div>
+                  <h4>Suivi en temps réel</h4>
+                  <p>Connectez-vous pour voir où en est votre dossier : reçu, en examen, accepté ou refusé.</p>
+                </div>
+              </div>
+              <div class="about-service">
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                <div>
+                  <h4>Vos données restent internes</h4>
+                  <p>Aucun partage avec des tiers — seuls les responsables SRM consultent votre dossier.</p>
+                </div>
+              </div>
+            </div>
+
+            <a th:href="@{/home/register}" class="btn-green">
+              S'inscrire maintenant <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         COUNTERS (Nos Chiffres)
+    ══════════════════════════════════════ -->
+    <section class="counters-section" id="chiffres" aria-label="Nos chiffres">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="sub-text" style="color:var(--green-light);">SRM Khénifra</span>
+          <h2>Nos Chiffres</h2>
+        </div>
+
+        <div class="counters-grid">
+          <div class="counter-box reveal">
+            <div class="counter-icon"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i></div>
+            <div class="counter-num"><span data-target="250" data-suffix="+">0+</span></div>
+            <div class="counter-label">Stagiaires accueillis</div>
+          </div>
+          <div class="counter-box reveal">
+            <div class="counter-icon"><i class="fa-solid fa-briefcase" aria-hidden="true"></i></div>
+            <div class="counter-num"><span data-target="12" data-suffix="+">0+</span></div>
+            <div class="counter-label">Domaines de formation</div>
+          </div>
+          <div class="counter-box reveal">
+            <div class="counter-icon"><i class="fa-solid fa-heart" aria-hidden="true"></i></div>
+            <div class="counter-num"><span data-target="98" data-suffix="%">0%</span></div>
+            <div class="counter-label">Taux de satisfaction</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         TABS (Domaines de stage)
+    ══════════════════════════════════════ -->
+    <section class="tabs-section" id="domaines" aria-label="Domaines de stage">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="sub-text">Découvrir</span>
+          <h2>Domaines de stage</h2>
+          <p>La SRM Khénifra propose des stages dans plusieurs domaines d'activité.</p>
+        </div>
+
+        <div class="tabs" id="domain-tabs">
+          <div class="tab-list" role="tablist">
+            <button class="tab-btn active" role="tab" data-tab="0">
+              <i class="fa-solid fa-helmet-safety" aria-hidden="true"></i> Génie Civil
+            </button>
+            <button class="tab-btn" role="tab" data-tab="1">
+              <i class="fa-solid fa-droplet" aria-hidden="true"></i> Eau &amp; Assainissement
+            </button>
+            <button class="tab-btn" role="tab" data-tab="2">
+              <i class="fa-solid fa-laptop-code" aria-hidden="true"></i> Informatique &amp; RH
+            </button>
+          </div>
+
+          <!-- Panel 1 -->
+          <div class="tab-panel active" role="tabpanel" data-panel="0">
+            <div class="tab-panel-img">
+              <img th:src="@{/hero-home/SRM-image.jpeg}" alt="Génie Civil" loading="lazy" />
+            </div>
+            <div class="tab-panel-body">
+              <h3>Génie Civil</h3>
+              <p>
+                Participez aux projets d'infrastructure de la SRM : réseaux d'eau potable,
+                stations de traitement, travaux de génie civil et suivi de chantiers.
+              </p>
+              <ul class="check-list">
+                <li>Conduite et suivi de travaux de réseaux</li>
+                <li>Études techniques et dimensionnement d'ouvrages</li>
+                <li>Topographie et relevés sur le terrain</li>
+                <li>Assistance à la maîtrise d'ouvrage</li>
+              </ul>
+              <a th:href="@{/home/register}" class="btn-green">
+                Postuler maintenant <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Panel 2 -->
+          <div class="tab-panel" role="tabpanel" data-panel="1">
+            <div class="tab-panel-img">
+              <img th:src="@{/hero-home/onep.jpg}" alt="Eau et Assainissement" loading="lazy" />
+            </div>
+            <div class="tab-panel-body">
+              <h3>Eau &amp; Assainissement</h3>
+              <p>
+                Découvrez le cœur du métier de la SRM : production et distribution d'eau potable,
+                assainissement liquide, laboratoire et contrôle qualité.
+              </p>
+              <ul class="check-list">
+                <li>Production et traitement de l'eau potable</li>
+                <li>Exploitation des stations de relevage et STEP</li>
+                <li>Analyses physico-chimiques en laboratoire</li>
+                <li>Gestion des branchements et compteurs</li>
+              </ul>
+              <a th:href="@{/home/register}" class="btn-green">
+                Postuler maintenant <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Panel 3 -->
+          <div class="tab-panel" role="tabpanel" data-panel="2">
+            <div class="tab-panel-img">
+              <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="Informatique et RH" loading="lazy" />
+            </div>
+            <div class="tab-panel-body">
+              <h3>Informatique &amp; Ressources Humaines</h3>
+              <p>
+                Contribuez à la transformation digitale de la SRM ou intégrez les équipes
+                support : systèmes d'information, communication et gestion des ressources humaines.
+              </p>
+              <ul class="check-list">
+                <li>Développement et maintenance d'applications</li>
+                <li>Administration des réseaux et systèmes</li>
+                <li>Gestion administrative des ressources humaines</li>
+                <li>Communication et accueil des clients</li>
+              </ul>
+              <a th:href="@{/home/register}" class="btn-green">
+                Postuler maintenant <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         FAQ / CONTACT
+    ══════════════════════════════════════ -->
+    <section class="faq-section" id="candidat" aria-label="Espace candidat">
+      <div class="container">
+        <div class="faq-inner">
+
+          <!-- Accordion -->
+          <div class="faq-text reveal-left" id="faq">
+            <span class="sub-text">Consulter</span>
+            <h2>Espace Candidat</h2>
+            <p>
+              Les réponses aux questions les plus fréquentes concernant votre demande de stage
+              auprès de la SRM Khénifra.
+            </p>
+
+            <div class="accordion">
+              <div class="accordion-item active">
+                <button class="accordion-head" aria-expanded="true">
+                  Qui peut postuler à un stage ?
+                  <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                </button>
+                <div class="accordion-body">
+                  <div class="accordion-body-inner">
+                    Tout étudiant inscrit dans un établissement d'enseignement supérieur
+                    (université, école d'ingénieurs, OFPPT…) peut déposer une demande de stage.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <button class="accordion-head" aria-expanded="false">
+                  Quels documents dois-je fournir ?
+                  <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                </button>
+                <div class="accordion-body">
+                  <div class="accordion-body-inner">
+                    Un CV au format PDF (10 Mo maximum) et les informations demandées dans
+                    le formulaire de candidature. Une lettre de motivation est facultative.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <button class="accordion-head" aria-expanded="false">
+                  Puis-je modifier ma candidature après soumission ?
+                  <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                </button>
+                <div class="accordion-body">
+                  <div class="accordion-body-inner">
+                    Tant que votre dossier est en cours d'examen, vous pouvez mettre à jour
+                    certaines informations depuis votre espace candidat.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <button class="accordion-head" aria-expanded="false">
+                  Comment suivre l'état de ma candidature ?
+                  <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                </button>
+                <div class="accordion-body">
+                  <div class="accordion-body-inner">
+                    Connectez-vous à votre espace candidat : vous y verrez le statut de votre
+                    dossier (reçu, en cours d'examen, accepté ou refusé) ainsi que vos notifications.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <button class="accordion-head" aria-expanded="false">
+                  Quand serai-je contacté(e) ?
+                  <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                </button>
+                <div class="accordion-body">
+                  <div class="accordion-body-inner">
+                    Vous serez notifié par e-mail à chaque changement de statut de votre dossier.
+                    Les délais dépendent des besoins des services et du volume de candidatures.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact panel -->
+          <div class="contact-panel reveal-right">
+            <h3>Contactez Nous</h3>
+            <p>
+              Une question ? L'équipe de la SRM Khénifra est à votre disposition.
+            </p>
+            <div class="contact-item">
+              <i class="fa-solid fa-phone" aria-hidden="true"></i>
+              <div>
+                <b>(+212) 5 35 XX XX XX</b>
+                <span>Centre de Relation Candidat</span>
+              </div>
+            </div>
+            <div class="contact-item">
+              <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+              <div>
+                <b>stage@srm-khenifra.ma</b>
+                <span>Réponse sous 48h ouvrées</span>
+              </div>
+            </div>
+            <div class="contact-item">
+              <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+              <div>
+                <b>Avenue Mohammed V</b>
+                <span>Khénifra, Maroc</span>
+              </div>
+            </div>
+            <div class="contact-item" style="border-bottom:none;">
+              <i class="fa-solid fa-clock" aria-hidden="true"></i>
+              <div>
+                <b>Lun – Ven : 08h30 – 16h30</b>
+                <span>Accueil du public</span>
+              </div>
+            </div>
+            <div class="contact-panel-cta">
+              <a th:href="@{/home/register}" class="btn-white">
+                <i class="fa-solid fa-user-plus" aria-hidden="true"></i> S'inscrire
+              </a>
+              <a th:href="@{/home/login}" class="btn-ghost-white">
+                <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Connexion
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════ -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="Logo SRM" class="footer-brand-img" />
+        <p>
+          La SRM Khénifra œuvre pour garantir un service de qualité
+          et accueillir les jeunes talents dans un cadre professionnel stimulant.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Navigation</h4>
+        <ul>
+          <li><a th:href="@{/}"><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Accueil</a></li>
+          <li><a href="#apropos"><i class="fa-solid fa-angle-right" aria-hidden="true"></i> À propos</a></li>
+          <li><a href="#comment"><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Comment postuler</a></li>
+          <li><a href="#domaines"><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Domaines de stage</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Espace Candidat</h4>
+        <ul>
+          <li><a th:href="@{/home/register}"><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Créer un compte</a></li>
+          <li><a th:href="@{/home/login}"><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Connexion</a></li>
+          <li><a href="#faq"><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Questions fréquentes</a></li>
+          <li><a href="#candidat"><i class="fa-solid fa-angle-right" aria-hidden="true"></i> Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Contact</h4>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+          <span>SRM Khénifra, Avenue Mohammed V, Khénifra, Maroc</span>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-phone" aria-hidden="true"></i>
+          <span>+212 5 35 XX XX XX</span>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+          <span>stage@srm-khenifra.ma</span>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fa-solid fa-clock" aria-hidden="true"></i>
+          <span>Lun – Ven : 08h30 – 16h30</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-inner">
+        <span>© <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM STAGE Khénifra. Tous droits réservés.</span>
+        <span>Conçu avec <i class="fa-solid fa-heart heart" aria-hidden="true"></i> pour la SRM</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll to top -->
+  <button id="scroll-top" aria-label="Retour en haut de page">
+    <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
+  </button>
+
+  <!-- Script -->
+  <script th:src="@{/js/home.js}"></script>
+</body>
+</html>

@@ -1,10 +1,11 @@
 package com.onep.internship.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "admins")
-public class Admin {
+@Table(name = "users")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +23,22 @@ public class Admin {
     @Column(nullable = false)
     private String password;
 
-    public Admin() {}
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.APPLICANT;
 
-    public Admin(String name, String email, String username, String password) {
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    public User() {}
+
+    public User(String name, String email, String username, String password, Role role) {
         this.name = name;
         this.email = email;
         this.username = username;
         this.password = password;
+        this.role = role;
+        this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() { return id; }
@@ -45,4 +55,10 @@ public class Admin {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

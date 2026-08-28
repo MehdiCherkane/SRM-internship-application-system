@@ -11,22 +11,28 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Version
+    private Long version;
+
+    @Column
     private String firstName;
 
-    @Column(nullable = false)
+    @Column
     private String lastName;
 
-    @Column(nullable = false)
+    @Column
     private String email;
 
-    @Column(nullable = false)
+    @Column(length = 30)
+    private String cni;
+
+    @Column
     private String phone;
 
-    @Column(nullable = false)
+    @Column
     private String university;
 
-    @Column(nullable = false)
+    @Column
     private String major;
 
     @Column(columnDefinition = "TEXT")
@@ -34,12 +40,20 @@ public class Application {
 
     private String cvFilePath;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime submittedDate;
+
+    /** Populated when status transitions from DRAFT to SUBMITTED. NULL for drafts. Used for DB-level unique constraint. */
+    @Column(name = "cycle_year")
+    private Integer cycleYear;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ApplicationStatus status;
+    private ApplicationStatus status = ApplicationStatus.DRAFT;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "applicant_id")
+    private User applicant;
 
     public Application() {}
 
@@ -52,12 +66,13 @@ public class Application {
         this.university = university;
         this.major = major;
         this.coverMessage = coverMessage;
-        this.submittedDate = LocalDateTime.now();
-        this.status = ApplicationStatus.PENDING;
+        this.status = ApplicationStatus.DRAFT;
     }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public Long getVersion() { return version; }
 
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
@@ -67,6 +82,9 @@ public class Application {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public String getCni() { return cni; }
+    public void setCni(String cni) { this.cni = cni; }
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
@@ -86,6 +104,12 @@ public class Application {
     public LocalDateTime getSubmittedDate() { return submittedDate; }
     public void setSubmittedDate(LocalDateTime submittedDate) { this.submittedDate = submittedDate; }
 
+    public Integer getCycleYear() { return cycleYear; }
+    public void setCycleYear(Integer cycleYear) { this.cycleYear = cycleYear; }
+
     public ApplicationStatus getStatus() { return status; }
     public void setStatus(ApplicationStatus status) { this.status = status; }
+
+    public User getApplicant() { return applicant; }
+    public void setApplicant(User applicant) { this.applicant = applicant; }
 }

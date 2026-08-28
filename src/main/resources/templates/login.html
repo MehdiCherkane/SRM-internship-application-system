@@ -3,23 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion â€” SRM</title>
-  <link rel="stylesheet" th:href="@{/css/style.css(v=5)}">
+  <title>Connexion — SRM</title>
+  <link rel="stylesheet" th:href="@{/css/style.css(v=7)}">
 </head>
 <body>
   <div class="page-wrapper">
     <header class="page-header">
       <a th:href="@{/}" class="page-header__logo">
         <img th:src="@{/logo/SRM_logo-removebg-preview.png}" alt="SRM" class="page-header__logo-img" />
+        <span class="page-header__wordmark">
+          <strong>SRM STAGE</strong>
+          <small>Kh&eacute;nifra</small>
+        </span>
       </a>
       <nav class="page-header__nav--inline">
         <a th:href="@{/home/register}" class="btn btn--outline btn--sm">Cr&eacute;er un compte</a>
       </nav>
     </header>
 
-    <main class="page-main">
-      <div class="card">
-        <h1>Bienvenue</h1>
+    <main class="auth-login">
+      <aside class="auth-login__panel" aria-label="SRM STAGE Kh&eacute;nifra">
+        <p class="auth-login__eyebrow">Espace candidat</p>
+        <h1>Votre prochain stage commence ici.</h1>
+        <p>Cr&eacute;ez, compl&eacute;tez et suivez votre candidature au sein de la SRM Kh&eacute;nifra.</p>
+      </aside>
+
+      <div class="auth-login__form">
+      <div class="card auth-login__card">
+        <h2>Bienvenue</h2>
         <p class="subtitle">Connectez-vous pour acc&eacute;der &agrave; votre espace</p>
 
         <div th:if="${param.error}" class="alert alert--error">
@@ -61,6 +72,7 @@
           Pas encore de compte ?
           <a th:href="@{/home/register}">Cr&eacute;er un compte</a>
         </div>
+      </div>
       </div>
     </main>
 

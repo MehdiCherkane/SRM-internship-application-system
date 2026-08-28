@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tableau de bord â€” SRM</title>
-  <link rel="stylesheet" th:href="@{/css/style.css(v=5)}">
+  <title>Tableau de bord — SRM</title>
+  <link rel="stylesheet" th:href="@{/css/style.css(v=7)}">
   <meta name="_csrf_param" th:content="${_csrf.parameterName}">
   <meta name="_csrf_token" th:content="${_csrf.token}">
 </head>
@@ -21,7 +21,7 @@
       <nav class="page-header__nav" id="mainNav">
         <a th:href="@{/admin/stats}" class="btn btn--outline btn--sm">Statistiques</a>
         <form method="post" th:action="@{/logout}">
-          <button type="submit" class="btn btn--outline btn--sm">DÃ©connexion</button>
+          <button type="submit" class="btn btn--outline btn--sm">Déconnexion</button>
         </form>
       </nav>
     </header>
@@ -43,22 +43,22 @@
         <a th:href="@{/admin/dashboard}" class="filter-tab" th:classappend="${currentFilter == null} ? 'active'" role="tab">Toutes</a>
         <a th:href="@{/admin/dashboard?status=SUBMITTED}" class="filter-tab" th:classappend="${currentFilter == 'SUBMITTED'} ? 'active'" role="tab">Soumises</a>
         <a th:href="@{/admin/dashboard?status=UNDER_REVIEW}" class="filter-tab" th:classappend="${currentFilter == 'UNDER_REVIEW'} ? 'active'" role="tab">En examen</a>
-        <a th:href="@{/admin/dashboard?status=ACCEPTED}" class="filter-tab" th:classappend="${currentFilter == 'ACCEPTED'} ? 'active'" role="tab">AcceptÃ©es</a>
-        <a th:href="@{/admin/dashboard?status=REJECTED}" class="filter-tab" th:classappend="${currentFilter == 'REJECTED'} ? 'active'" role="tab">RefusÃ©es</a>
+        <a th:href="@{/admin/dashboard?status=ACCEPTED}" class="filter-tab" th:classappend="${currentFilter == 'ACCEPTED'} ? 'active'" role="tab">Acceptées</a>
+        <a th:href="@{/admin/dashboard?status=REJECTED}" class="filter-tab" th:classappend="${currentFilter == 'REJECTED'} ? 'active'" role="tab">Refusées</a>
       </div>
 
       <div th:if="${#lists.isEmpty(applications)}" class="card card--centered" style="padding:3rem 2rem;">
-        <p style="color:var(--muted);">Aucune candidature trouvÃ©e.</p>
+        <p style="color:var(--muted);">Aucune candidature trouvée.</p>
       </div>
 
       <div class="card" th:if="${!#lists.isEmpty(applications)}" style="padding:0;overflow:hidden;">
         <div class="table-wrapper">
-          <table>
+          <table class="data-table">
             <thead>
               <tr>
                 <th>Nom complet</th>
-                <th>UniversitÃ©</th>
-                <th>FiliÃ¨re</th>
+                <th>Université</th>
+                <th>Filière</th>
                 <th>Date de soumission</th>
                 <th>Statut</th>
                 <th>Actions</th>
@@ -66,14 +66,14 @@
             </thead>
             <tbody>
               <tr th:each="app : ${applications}" th:attr="data-href=@{/admin/application/{id}(id=${app.id})}" style="cursor:pointer" onclick="location.href=this.dataset.href">
-                <td th:text="${app.firstName + ' ' + app.lastName}">John Doe</td>
-                <td th:text="${app.university}">Universit\u00e9 Mohammed V</td>
-                <td th:text="${app.major}">G\u00e9nie Informatique</td>
-                <td th:text="${app.submittedDate != null ? #temporals.format(app.submittedDate, 'dd/MM/yyyy') : 'â€”'}">12/03/2024</td>
-                <td>
+                <td data-label="Nom complet" th:text="${app.firstName + ' ' + app.lastName}">John Doe</td>
+                <td data-label="Universit&eacute;" th:text="${app.university}">Universit\u00e9 Mohammed V</td>
+                <td data-label="Fili&egrave;re" th:text="${app.major}">G\u00e9nie Informatique</td>
+                <td data-label="Date de soumission" th:text="${app.submittedDate != null ? #temporals.format(app.submittedDate, 'dd/MM/yyyy') : '—'}">12/03/2024</td>
+                <td data-label="Statut">
                   <span class="badge" th:classappend="${'badge--' + app.status.cssClass}" th:text="${app.status.label}">Soumise</span>
                 </td>
-                <td onclick="event.stopPropagation()">
+                <td data-label="Actions" onclick="event.stopPropagation()">
                   <div class="action-buttons">
                     <a th:href="@{/admin/cv/{id}(id=${app.id})}" class="btn btn--cv btn--sm" target="_blank" rel="noopener">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -105,7 +105,7 @@
     </main>
 
     <footer class="page-footer">
-      &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM â€” Administration
+      &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM — Administration
     </footer>
   </div>
 
@@ -116,7 +116,7 @@
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       </div>
       <div class="modal__title" id="modal-title">Confirmer l'action</div>
-      <div class="modal__desc" id="modal-desc">Un email sera envoyÃ© au candidat.</div>
+      <div class="modal__desc" id="modal-desc">Un email sera envoyé au candidat.</div>
       <div class="modal__candidate" id="modal-candidate"></div>
       <div class="modal__actions">
         <button class="btn btn--outline" onclick="closeModal()">Annuler</button>
@@ -144,15 +144,15 @@
       document.getElementById('modal-candidate').textContent = name;
 
       if (isDelete) {
-        document.getElementById('modal-desc').textContent = 'Supprimer dÃ©finitivement cette candidature ? Le CV sera Ã©galement effacÃ©.';
+        document.getElementById('modal-desc').textContent = 'Supprimer définitivement cette candidature ? Le CV sera également effacé.';
         document.getElementById('modal-title').textContent = 'Supprimer la candidature';
       } else if (isReview) {
-        document.getElementById('modal-desc').textContent = 'Placer cette candidature en cours d\'examen ? Elle sera verrouillÃ©e pour le candidat.';
+        document.getElementById('modal-desc').textContent = 'Placer cette candidature en cours d\'examen ? Elle sera verrouillée pour le candidat.';
         document.getElementById('modal-title').textContent = 'Commencer l\'examen';
       } else {
         document.getElementById('modal-desc').textContent = isAccept
-          ? 'Accepter cette candidature ? Un email sera envoyÃ© au candidat.'
-          : 'Refuser cette candidature ? Un email sera envoyÃ© au candidat.';
+          ? 'Accepter cette candidature ? Un email sera envoyé au candidat.'
+          : 'Refuser cette candidature ? Un email sera envoyé au candidat.';
         document.getElementById('modal-title').textContent = isAccept ? 'Accepter la candidature' : 'Refuser la candidature';
       }
 

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Candidature envoyÃ©e â€” SRM</title>
-  <link rel="stylesheet" th:href="@{/css/style.css(v=5)}">
+  <title>Candidature envoyée — SRM</title>
+  <link rel="stylesheet" th:href="@{/css/style.css(v=7)}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
@@ -22,9 +22,9 @@
           <path d="M20 34l8 8 16-16" stroke="#059669" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
 
-        <h1>Candidature reÃ§ue !</h1>
+        <h1>Candidature reçue !</h1>
         <p class="subtitle" style="max-width:420px;margin-left:auto;margin-right:auto;">
-          Merci pour votre candidature. Notre Ã©quipe examinera votre dossier et vous recevrez une notification par email dÃ¨s qu'une dÃ©cision sera prise.
+          Merci pour votre candidature. Notre équipe examinera votre dossier et vous recevrez une notification par email dès qu'une décision sera prise.
         </p>
 
         <div class="success-actions">
@@ -32,14 +32,14 @@
             <i class="fa-solid fa-list-check" aria-hidden="true"></i> Voir mes candidatures
           </a>
           <a th:href="@{/}" class="btn btn--outline btn--full">
-            <i class="fa-solid fa-house" aria-hidden="true"></i> Retour Ã  l'accueil
+            <i class="fa-solid fa-house" aria-hidden="true"></i> Retour à l'accueil
           </a>
         </div>
       </div>
     </main>
 
     <footer class="page-footer">
-      &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM STAGE KhÃ©nifra. Tous droits rÃ©servÃ©s.
+      &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM STAGE Khénifra. Tous droits réservés.
     </footer>
   </div>
 </body>

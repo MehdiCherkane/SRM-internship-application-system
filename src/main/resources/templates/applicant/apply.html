@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Candidature â€” SRM</title>
-  <link rel="stylesheet" th:href="@{/css/style.css(v=5)}">
+  <title>Candidature — SRM</title>
+  <link rel="stylesheet" th:href="@{/css/style.css(v=7)}">
 </head>
 <body>
   <div class="page-wrapper">
@@ -28,7 +28,7 @@
       <div class="card">
         <h1 th:if="${!#strings.isEmpty(form.id)}">Modifier ma candidature</h1>
         <h1 th:if="${#strings.isEmpty(form.id)}">Formulaire de candidature</h1>
-        <p class="subtitle">Stage au sein de la SRM KhÃ©nifra â€” Branche Eau</p>
+        <p class="subtitle">Stage au sein de la SRM Khénifra — Branche Eau</p>
 
         <form method="post" th:action="@{/applicant/apply}" th:object="${form}" enctype="multipart/form-data" novalidate id="applyForm">
           <input type="hidden" name="id" th:value="*{id}">
@@ -36,6 +36,14 @@
           <div th:if="${#fields.hasErrors('global')}" class="alert alert--error">Veuillez corriger les erreurs ci-dessous.</div>
 
           <div class="form-grid">
+
+          <div class="form-section-heading">
+            <span class="form-section-heading__number">01</span>
+            <div>
+              <h2>Identit&eacute; et coordonn&eacute;es</h2>
+              <p>Les informations n&eacute;cessaires pour vous contacter.</p>
+            </div>
+          </div>
 
           <div class="form-group">
             <label for="firstName" class="form-label">Pr&eacute;nom <span class="required">*</span></label>
@@ -68,6 +76,14 @@
             <div class="form-error" th:classappend="${#fields.hasErrors('phone')} ? 'visible'" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">Le t&eacute;l&eacute;phone est requis.</div>
           </div>
 
+          <div class="form-section-heading">
+            <span class="form-section-heading__number">02</span>
+            <div>
+              <h2>Parcours acad&eacute;mique</h2>
+              <p>Indiquez votre &eacute;tablissement et votre sp&eacute;cialit&eacute;.</p>
+            </div>
+          </div>
+
           <div class="form-group">
             <label for="university-input" class="form-label">Universit&eacute; / &Eacute;cole <span class="required">*</span></label>
             <div class="combobox-wrapper" id="university-combobox">
@@ -84,9 +100,25 @@
           </div>
 
           <div class="form-group form-group--full">
-            <label for="major" class="form-label">Fili&egrave;re / Sp&eacute;cialit&eacute; <span class="required">*</span></label>
-            <input type="text" id="major" name="major" class="form-input" th:field="*{major}" th:errorclass="error" required placeholder="Ex: G&eacute;nie Informatique, G&eacute;nie Civil, ...">
+            <label for="major-input" class="form-label">Fili&egrave;re / Sp&eacute;cialit&eacute; <span class="required">*</span></label>
+            <div class="combobox-wrapper" id="major-combobox" th:classappend="${#fields.hasErrors('major')} ? 'error'">
+              <input type="text" id="major-input" class="combobox-input" placeholder="Rechercher une fili&egrave;re..." autocomplete="off" aria-expanded="false" aria-autocomplete="list" aria-controls="major-list" role="combobox">
+              <input type="hidden" id="major" name="major" th:value="*{major}" required>
+              <svg class="combobox-arrow" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="combobox-dropdown" id="major-list" role="listbox"></div>
+            </div>
+            <div class="combobox-other-input" id="major-other-wrapper">
+              <input type="text" id="majorOther" class="form-input" placeholder="Pr&eacute;cisez votre fili&egrave;re ou sp&eacute;cialit&eacute;">
+            </div>
             <div class="form-error" th:classappend="${#fields.hasErrors('major')} ? 'visible'" th:if="${#fields.hasErrors('major')}" th:errors="*{major}">La fili&egrave;re est requise.</div>
+          </div>
+
+          <div class="form-section-heading">
+            <span class="form-section-heading__number">03</span>
+            <div>
+              <h2>Motivation et documents</h2>
+              <p>Ajoutez votre lettre de motivation et votre CV au format PDF.</p>
+            </div>
           </div>
 
           <div class="form-group form-group--full">
@@ -265,6 +297,77 @@
         if (otherVal) otherInput.value = otherVal;
       }
 
+      // ============ Major Combobox ============
+      var majors = [
+        "Développement Digital", "Systèmes d'Information", "Génie Informatique",
+        "Cybersécurité", "Data Science et Intelligence Artificielle", "Réseaux et Télécommunications",
+        "Génie Civil", "Hydraulique et Environnement", "Génie Électrique",
+        "Électromécanique", "Génie Mécanique", "Maintenance Industrielle",
+        "Génie Industriel", "Génie des Procédés", "Énergies Renouvelables",
+        "Qualité, Hygiène, Sécurité, Environnement", "Logistique et Supply Chain",
+        "Management", "Commerce et Marketing", "Finance et Comptabilité",
+        "Ressources Humaines", "Droit", "Communication", "SIG et Topographie"
+      ].sort(function(a, b) { return a.localeCompare(b, 'fr'); });
+
+      var majorWrapper = document.getElementById('major-combobox');
+      var majorInput = document.getElementById('major-input');
+      var majorHidden = document.getElementById('major');
+      var majorList = document.getElementById('major-list');
+      var majorOtherWrapper = document.getElementById('major-other-wrapper');
+      var majorOtherInput = document.getElementById('majorOther');
+      var selectedMajor = '';
+      var majorOpen = false;
+
+      function renderMajors(text) {
+        text = (text || '').toLocaleLowerCase('fr').trim();
+        var matched = majors.filter(function(major) { return !text || major.toLocaleLowerCase('fr').indexOf(text) !== -1; });
+        var html = matched.map(function(major) {
+          return '<div class="combobox-option' + (major === selectedMajor ? ' selected' : '') + '" data-value="' + major.replace(/"/g, '&quot;') + '">' + major + '</div>';
+        }).join('');
+        if (text && (matched.length === 0 || 'autre'.indexOf(text) !== -1)) {
+          html += '<div class="combobox-option other-option" data-value="__other__">Autre filière ou spécialité...</div>';
+        }
+        majorList.innerHTML = html;
+        if (!majorOpen && matched.length > 0) openMajorDropdown();
+      }
+
+      function openMajorDropdown() { majorOpen = true; majorList.classList.add('open'); majorInput.setAttribute('aria-expanded', 'true'); }
+      function closeMajorDropdown() { majorOpen = false; majorList.classList.remove('open'); majorInput.setAttribute('aria-expanded', 'false'); }
+
+      majorInput.addEventListener('input', function() { renderMajors(this.value); });
+      majorInput.addEventListener('focus', function() { renderMajors(this.value); });
+      majorInput.addEventListener('blur', function() { setTimeout(closeMajorDropdown, 200); });
+
+      majorList.addEventListener('mousedown', function(e) {
+        var option = e.target.closest('.combobox-option');
+        if (!option) return;
+        var value = option.getAttribute('data-value');
+        if (value === '__other__') {
+          majorHidden.value = '__other__';
+          majorInput.value = 'Autre filière ou spécialité...';
+          majorOtherWrapper.classList.add('visible');
+          majorOtherInput.focus();
+        } else {
+          majorHidden.value = value;
+          majorInput.value = value;
+          majorOtherWrapper.classList.remove('visible');
+          majorOtherInput.value = '';
+        }
+        selectedMajor = value;
+        majorInput.classList.remove('error');
+        closeMajorDropdown();
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!majorWrapper.contains(e.target)) closeMajorDropdown();
+      });
+
+      var currentMajor = majorHidden.value;
+      if (currentMajor) {
+        selectedMajor = currentMajor;
+        majorInput.value = currentMajor;
+      }
+
       // ============ File Upload Drag & Drop ============
       var uploadArea = document.getElementById('file-upload-area');
       var uploadText = document.getElementById('file-upload-text');
@@ -355,8 +458,15 @@
         }
 
         var major = document.getElementById('major');
-        if (!major.value.trim()) { major.classList.add('error'); valid = false; }
-        else major.classList.remove('error');
+        var majorInput = document.getElementById('major-input');
+        var majorOther = document.getElementById('majorOther');
+        if (!major.value || major.value === '__other__' && !majorOther.value.trim()) {
+          majorInput.classList.add('error');
+          valid = false;
+        } else {
+          majorInput.classList.remove('error');
+          if (major.value === '__other__') major.value = majorOther.value.trim();
+        }
 
         var isEdit = /*[[${!#strings.isEmpty(form.id)}]]*/ false;
       var hasExistingCv = /*[[${form.existingCv}]]*/ false;

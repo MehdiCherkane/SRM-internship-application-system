@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title th:text="${app.firstName + ' ' + app.lastName + ' â€” SRM'}">Candidat â€” SRM</title>
-  <link rel="stylesheet" th:href="@{/css/style.css(v=5)}">
+  <title th:text="${app.firstName + ' ' + app.lastName + ' — SRM'}">Candidat — SRM</title>
+  <link rel="stylesheet" th:href="@{/css/style.css(v=7)}">
   <meta name="_csrf_param" th:content="${_csrf.parameterName}">
   <meta name="_csrf_token" th:content="${_csrf.token}">
 </head>
@@ -20,7 +20,7 @@
       </button>
       <nav class="page-header__nav" id="mainNav">
         <form method="post" th:action="@{/logout}">
-          <button type="submit" class="btn btn--outline btn--sm">DÃ©connexion</button>
+          <button type="submit" class="btn btn--outline btn--sm">Déconnexion</button>
         </form>
       </nav>
     </header>
@@ -149,7 +149,7 @@
     </main>
 
     <footer class="page-footer">
-      &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM â€” Administration
+      &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> SRM — Administration
     </footer>
   </div>
 
@@ -160,7 +160,7 @@
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       </div>
       <div class="modal__title" id="modal-title">Confirmer l'action</div>
-      <div class="modal__desc" id="modal-desc">Un email sera envoyÃ© au candidat.</div>
+      <div class="modal__desc" id="modal-desc">Un email sera envoyé au candidat.</div>
       <div class="modal__candidate" id="modal-candidate"></div>
       <div class="modal__actions">
         <button class="btn btn--outline" onclick="closeModal()">Annuler</button>
@@ -188,15 +188,15 @@
       document.getElementById('modal-candidate').textContent = name;
 
       if (isDelete) {
-        document.getElementById('modal-desc').textContent = 'Supprimer dÃ©finitivement cette candidature ? Le CV sera Ã©galement effacÃ©.';
+        document.getElementById('modal-desc').textContent = 'Supprimer définitivement cette candidature ? Le CV sera également effacé.';
         document.getElementById('modal-title').textContent = 'Supprimer la candidature';
       } else if (isReview) {
-        document.getElementById('modal-desc').textContent = 'Placer cette candidature en cours d\'examen ? Elle sera verrouillÃ©e pour le candidat.';
+        document.getElementById('modal-desc').textContent = 'Placer cette candidature en cours d\'examen ? Elle sera verrouillée pour le candidat.';
         document.getElementById('modal-title').textContent = 'Commencer l\'examen';
       } else {
         document.getElementById('modal-desc').textContent = isAccept
-          ? 'Accepter cette candidature ? Un email sera envoyÃ© au candidat.'
-          : 'Refuser cette candidature ? Un email sera envoyÃ© au candidat.';
+          ? 'Accepter cette candidature ? Un email sera envoyé au candidat.'
+          : 'Refuser cette candidature ? Un email sera envoyé au candidat.';
         document.getElementById('modal-title').textContent = isAccept ? 'Accepter la candidature' : 'Refuser la candidature';
       }
 

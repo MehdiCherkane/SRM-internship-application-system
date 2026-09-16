@@ -1,4 +1,7 @@
 /*M!999999\- enable the sandbox mode */ 
+-- WARNING: DEV-ONLY dump. DO NOT run on a client/production database.
+-- It contains DROP DATABASE and DROP TABLE statements and WILL DELETE DATA.
+-- For client installs use schema-install.sql instead.
 -- MariaDB dump 10.19-12.3.2-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: internship_db

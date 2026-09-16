@@ -12,13 +12,20 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON internship_db.*
   TO 'internship_app'@'localhost';
 FLUSH PRIVILEGES;
 
--- 2. Drop legacy admins table (unified into users with role=ADMIN)
-DROP TABLE IF EXISTS admins;
+-- 2. Legacy admins table (unified into users with role=ADMIN)
+--    SAFE: commented out by default. Only uncomment if you are sure
+--    this table is leftover from the old version and holds no useful data.
+-- DROP TABLE IF EXISTS admins;
 
--- 3. Drop stale foreign key pointing to admins table
---    (if it still exists — already removed in dev)
-ALTER TABLE password_reset_tokens
-  DROP FOREIGN KEY IF EXISTS FKs1hs0cnnlp8l7rhx4cwc4kwi7;
+-- 3. Stale foreign key pointing to admins table
+--    MySQL does not support "DROP FOREIGN KEY IF EXISTS".
+--    Run the SELECT below first; only run the ALTER if the key exists.
+--    SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+--      WHERE TABLE_SCHEMA = 'internship_db'
+--        AND TABLE_NAME = 'password_reset_tokens'
+--        AND CONSTRAINT_TYPE = 'FOREIGN KEY';
+--    Then if needed:
+--    ALTER TABLE password_reset_tokens DROP FOREIGN KEY <constraint_name>;
 
 -- 4. Make NOT NULL columns nullable to match JPA entity defaults
 --    (draft applications may have null fields)
@@ -39,7 +46,7 @@ ALTER TABLE users
 -- ============================================================
 -- Done. You can now start the application with:
 --   java -jar internship-0.0.1-SNAPSHOT.jar
--- The UserSeeder will create the default admin account
--- (username=admin, password=admin123) on first boot.
+-- The UserSeeder will create the initial admin account ONLY if
+-- APP_ADMIN_PASSWORD is set (see .env.example).
 -- CHANGE THE PASSWORD IMMEDIATELY after first login.
 -- ============================================================
